@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+  --vinho: #8e2753;
+  --vinho-hover: #7a2047;
+  --vinho-light: #f5eaf0;
+  --azul: #0e2955;
+  --azul-light: #1a3d7a;
+  --bg: #f7f5f5;
+  --surface: #ffffff;
+  --surface-2: #f0edf0;
+  --border: #e4dfe4;
+  --text: #0e2955;
+  --text-muted: #6b5b6e;
+  --text-light: #9c8fa0;
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+}
+
+* {
+  font-family: 'Montserrat', sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root { width: 100%; min-height: 100vh; }
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
+
+input, textarea, select, button {
+  font-family: 'Montserrat', sans-serif;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: fadeIn 0.18s ease forwards; }
+
+/* Foto redonda para descrição de produto */
+.foto-redonda {
+  border-radius: 50%;
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 8px;
+  border: 3px solid var(--vinho-light);
+}
+.secao-foto { text-align: center; margin: 20px 0; }
+.secao-foto h3 { font-size: 13px; font-weight: 700; color: var(--azul); margin: 8px 0 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.secao-foto p  { font-size: 13px; color: var(--text-muted); line-height: 1.6; max-width: 500px; margin: 0 auto; }
+
+/* Tabela de medidas gerada */
+.tabela-medidas { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+.tabela-medidas th { background: var(--azul); color: white; padding: 8px 12px; text-align: center; font-weight: 600; }
+.tabela-medidas td { padding: 7px 12px; text-align: center; border-bottom: 1px solid var(--border); color: var(--text); }
+.tabela-medidas tr:nth-child(even) td { background: var(--surface-2); }
+.tabela-medidas tr:first-child td { font-weight: 600; color: var(--azul); }

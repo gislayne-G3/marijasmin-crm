@@ -10,6 +10,9 @@
     "api/nuvemshop-sync-estoque.ts":   { "maxDuration": 120 },
     "api/tiny-sync-pedidos.ts":        { "maxDuration": 120 },
     "api/tiny-webhook-pedido.ts":      { "maxDuration": 60 },
-    "api/tiny-reservar-estoque.ts":    { "maxDuration": 60 }
+    "api/tiny-reservar-estoque.ts":    { "maxDuration": 60 },
+    "api/metas-distribuir.ts":         { "maxDuration": 60 },
+    "api/metas-aprovar.ts":            { "maxDuration": 30 },
+    "api/comissoes-calcular.ts":       { "maxDuration": 120 }
   }
 }

@@ -156,7 +156,12 @@ export default function PimEditor() {
       const res = await fetch('/api/gerar-descricao', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome: produto.nome, categoria: produto.categoria, cores: cores.map(c => c.cor) }),
+        body: JSON.stringify({
+          nome: produto.nome,
+          categoria: produto.categoria,
+          cores: cores.map(c => c.cor),
+          descricao_atual: produto.descricao || '',
+        }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)

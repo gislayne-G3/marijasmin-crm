@@ -149,6 +149,25 @@ export async function salvarMedidas(produtoId: number, medidas: Omit<ProdutoMedi
   if (error) throw error
 }
 
+// Correspondência padrão de tamanhos
+const TAMANHO_NUMERO: Record<string, string> = {
+  P: '36', M: '38', G: '40/42', GG: '44', XG: '46', XGG: '48',
+}
+
+// Guia de como medir (por campo)
+const GUIA_MEDIDAS: Record<string, string> = {
+  busto: 'Meça ao redor da parte mais larga do peito, com os braços relaxados.',
+  cintura: 'Meça na parte mais estreita do tronco, geralmente 3 cm acima do umbigo.',
+  quadril: 'Meça ao redor da parte mais larga dos quadris e glúteos.',
+  comprimento: 'Meça do ombro até a barra, com a peça esticada na horizontal.',
+  comprimento_blusa: 'Meça do ombro até a barra da blusa.',
+  comprimento_saia: 'Meça do cós até a barra da saia.',
+  comprimento_total: 'Meça do ombro até a barra, com a peça esticada verticalmente.',
+  entreperna: 'Meça da virilha até o tornozelo, pela parte interna da perna.',
+  ombro: 'Meça de uma ponta do ombro à outra, pela parte traseira.',
+  manga: 'Meça do ombro até o punho, com o braço levemente dobrado.',
+}
+
 export function gerarHtmlDescricao(
   _produto: Produto,
   descricaoHtml: string,
@@ -166,53 +185,76 @@ export function gerarHtmlDescricao(
   }
 
   // Injeta uma foto circular DENTRO de cada <div class="secao-foto">
-  // (float:right, pequena, entre o texto — como num e-commerce real)
+  // float:LEFT — foto à esquerda, texto flui à direita
   let fotoIdx = 0
   const htmlComFotos = descricaoHtml.replace(/<div class="secao-foto">/g, () => {
     const foto = fotosDisp[fotoIdx]
     fotoIdx++
-    if (!foto) return '<div class="secao-foto">'
-    const fotoTag = `<img src="${foto}" style="width:130px;height:130px;border-radius:50%;object-fit:cover;float:right;margin:0 0 12px 18px;border:3px solid #f0e8ed;flex-shrink:0" alt="Foto do produto" />`
-    return `<div class="secao-foto" style="overflow:hidden">${fotoTag}`
+    if (!foto) return '<div class="secao-foto" style="overflow:hidden;margin-bottom:20px">'
+    const fotoTag = `<img src="${foto}" style="width:130px;height:130px;border-radius:50%;object-fit:cover;float:left;margin:4px 18px 12px 0;border:3px solid #f0e8ed;flex-shrink:0" alt="Foto do produto" />`
+    return `<div class="secao-foto" style="overflow:hidden;margin-bottom:20px">${fotoTag}`
   })
 
-  // Limpa float ao final de cada seção
-  const htmlFinal = htmlComFotos
-    .replace(/<\/div>/g, (match, offset, str) => {
-      // Adiciona clearfix apenas nas secao-foto
-      const antes = str.substring(0, offset)
-      const ultimaAbertura = antes.lastIndexOf('<div class="secao-foto"')
-      const ultimoFechamento = antes.lastIndexOf('</div>')
-      if (ultimaAbertura > ultimoFechamento) {
-        return '<div style="clear:both"></div></div>'
-      }
-      return match
-    })
+  // Clearfix ao fechar cada secao-foto
+  const htmlFinal = htmlComFotos.replace(/<\/div>/g, (match, offset: number, str: string) => {
+    const antes = str.substring(0, offset)
+    const ultimaAbertura = antes.lastIndexOf('class="secao-foto"')
+    const ultimoFechamento = antes.lastIndexOf('</div>')
+    if (ultimaAbertura > ultimoFechamento) {
+      return '<div style="clear:both"></div></div>'
+    }
+    return match
+  })
 
-  // Tabela de medidas — SÓ aparece se tiver ao menos um campo preenchido
+  // Tabela de medidas — SÓ aparece se tiver ao menos um campo preenchido com valor real
   const temMedida = medidas.some(m =>
-    campos.some(c => m.medidas?.[c] && String(m.medidas[c]).trim() !== '' && String(m.medidas[c]).trim() !== '0')
+    campos.some(c => {
+      const v = String(m.medidas?.[c] || '').trim()
+      return v !== '' && v !== '0'
+    })
   )
 
   if (!temMedida) return htmlFinal
 
-  const tabelaRows = medidas.map(m =>
-    `<tr><td style="font-weight:700;padding:8px 12px;border-bottom:1px solid #f0e8ed">${m.tamanho}</td>${
-      campos.map(c => `<td style="padding:8px 12px;border-bottom:1px solid #f0e8ed;text-align:center">${m.medidas[c] ? m.medidas[c] + 'cm' : '—'}</td>`).join('')
-    }</tr>`
-  ).join('')
+  // Guia de como medir (apenas os campos usados)
+  const guiaTexto = campos
+    .filter(c => GUIA_MEDIDAS[c])
+    .map(c => `<li><strong>${LABEL_MEDIDAS[c] || c}:</strong> ${GUIA_MEDIDAS[c]}</li>`)
+    .join('')
+
+  const tabelaRows = medidas.map(m => {
+    const numero = TAMANHO_NUMERO[m.tamanho] || ''
+    return `<tr>
+      <td style="font-weight:700;padding:9px 14px;border-bottom:1px solid #f5eef2;white-space:nowrap">${m.tamanho}</td>
+      <td style="padding:9px 14px;border-bottom:1px solid #f5eef2;text-align:center;color:#6b7280;font-size:12px">${numero}</td>
+      ${campos.map(c => `<td style="padding:9px 14px;border-bottom:1px solid #f5eef2;text-align:center">${m.medidas?.[c] ? m.medidas[c] + ' cm' : '—'}</td>`).join('')}
+    </tr>`
+  }).join('')
 
   const tabelaHtml = `
-<div style="margin-top:24px;clear:both">
-<h3 style="font-size:14px;font-weight:700;color:#0e2955;margin:0 0 10px;text-transform:uppercase;letter-spacing:0.5px">Tabela de Medidas</h3>
-<table style="width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:8px;overflow:hidden;border:1px solid #f0e8ed">
-  <thead><tr style="background:#0e2955;color:white">
-    <th style="padding:9px 12px;text-align:left;font-size:12px">Tamanho</th>
-    ${campos.map(c => `<th style="padding:9px 12px;text-align:center;font-size:12px">${LABEL_MEDIDAS[c] || c}</th>`).join('')}
-  </tr></thead>
-  <tbody>${tabelaRows}</tbody>
-</table>
-<p style="font-size:11px;color:#9c8fa0;margin-top:6px">* Medidas em centímetros. Use como referência.</p>
+<div style="margin-top:32px;clear:both">
+  <h3 style="font-size:15px;font-weight:700;color:#0e2955;margin:0 0 6px;letter-spacing:0.3px">📏 Tabela de Medidas</h3>
+  <p style="font-size:12px;color:#6b7280;margin:0 0 14px">As medidas abaixo são da <strong>peça</strong>, não do corpo. Adicione 2–4 cm para conforto.</p>
+
+  <table style="width:100%;border-collapse:collapse;font-size:13px;border:1px solid #f0e8ed;border-radius:10px;overflow:hidden">
+    <thead>
+      <tr style="background:#0e2955;color:white">
+        <th style="padding:10px 14px;text-align:left;font-size:12px;font-weight:600">Tam.</th>
+        <th style="padding:10px 14px;text-align:center;font-size:12px;font-weight:600">Numeração</th>
+        ${campos.map(c => `<th style="padding:10px 14px;text-align:center;font-size:12px;font-weight:600">${LABEL_MEDIDAS[c] || c}</th>`).join('')}
+      </tr>
+    </thead>
+    <tbody style="background:#fff">${tabelaRows}</tbody>
+  </table>
+
+  <div style="margin-top:16px;background:#fdf8fb;border:1px solid #f0e8ed;border-radius:8px;padding:14px 18px">
+    <p style="font-size:12px;font-weight:700;color:#0e2955;margin:0 0 8px">Como tirar suas medidas corretamente:</p>
+    <ul style="margin:0;padding-left:18px;font-size:12px;color:#555;line-height:1.8">
+      ${guiaTexto}
+      <li><strong>Dica:</strong> use uma fita métrica flexível. Não aperte — deixe um dedo de folga para conforto.</li>
+    </ul>
+    <p style="font-size:11px;color:#9c8fa0;margin:10px 0 0">Ficou com dúvida sobre qual tamanho escolher? Fale conosco no WhatsApp — vamos te ajudar! 💜</p>
+  </div>
 </div>`
 
   return htmlFinal + tabelaHtml

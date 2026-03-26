@@ -1,13 +1,15 @@
 import { useState } from 'react'
-import { RefreshCw, Package, ShoppingCart, CheckCircle2, AlertCircle, Clock } from 'lucide-react'
+import { RefreshCw, Package, ShoppingCart, CheckCircle2, AlertCircle, Clock, Store } from 'lucide-react'
 
 interface SyncResult {
   ok: boolean
   atualizados?: number
+  variacoes_atualizadas?: number
   importados?: number
   erros: number
   errosList?: string[]
   skus_mapeados?: number
+  produtos_processados?: number
   msg?: string
 }
 
@@ -19,10 +21,23 @@ interface SyncLog {
 
 export default function Sincronizacao() {
   const [loadingEstoque, setLoadingEstoque] = useState(false)
+  const [loadingEstoqueNS, setLoadingEstoqueNS] = useState(false)
   const [loadingPedidos, setLoadingPedidos] = useState(false)
   const [paginaInicio, setPaginaInicio] = useState(1)
   const [paginaFim, setPaginaFim] = useState(10)
   const [logs, setLogs] = useState<SyncLog[]>([])
+
+  async function syncEstoqueNuvemshop() {
+    setLoadingEstoqueNS(true)
+    try {
+      const res = await fetch('/api/nuvemshop-sync-estoque', { method: 'POST' })
+      const result: SyncResult = await res.json()
+      setLogs(prev => [{ tipo: 'Estoque Nuvemshop', result, timestamp: new Date().toLocaleTimeString('pt-BR') }, ...prev])
+    } catch (e) {
+      setLogs(prev => [{ tipo: 'Estoque Nuvemshop', result: { ok: false, erros: 1, errosList: [String(e)] }, timestamp: new Date().toLocaleTimeString('pt-BR') }, ...prev])
+    }
+    setLoadingEstoqueNS(false)
+  }
 
   async function syncEstoque() {
     setLoadingEstoque(true)
@@ -63,7 +78,40 @@ export default function Sincronizacao() {
 
       <div style={{ display: 'grid', gap: 16 }}>
 
-        {/* Card Estoque */}
+        {/* Card Estoque Nuvemshop — PRINCIPAL */}
+        <div style={{ background: 'var(--surface)', border: '2px solid var(--vinho)', borderRadius: 14, padding: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+            <div style={{ width: 42, height: 42, borderRadius: 10, background: 'var(--vinho-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Store size={20} color="var(--vinho)" />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)', margin: 0 }}>Sync Estoque — Nuvemshop</h2>
+                <span style={{ fontSize: 10, background: 'var(--vinho)', color: 'white', padding: '2px 8px', borderRadius: 100, fontWeight: 700 }}>RECOMENDADO</span>
+              </div>
+              <p style={{ color: 'var(--text-muted)', fontSize: 12, margin: '0 0 16px', lineHeight: 1.5 }}>
+                Atualiza o estoque de cada variação (cor × tamanho) usando o <strong>nuvemshop_variant_id</strong> — a forma mais precisa. Processa os 98 produtos ativos. Leva ~3 min.
+              </p>
+              <button
+                onClick={syncEstoqueNuvemshop}
+                disabled={loadingEstoqueNS}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  padding: '10px 20px', borderRadius: 8, border: 'none',
+                  background: loadingEstoqueNS ? 'var(--border)' : 'var(--vinho)',
+                  color: 'white', fontSize: 13, fontWeight: 600,
+                  cursor: loadingEstoqueNS ? 'not-allowed' : 'pointer',
+                  fontFamily: 'Montserrat',
+                }}
+              >
+                <RefreshCw size={14} style={{ animation: loadingEstoqueNS ? 'spin 1s linear infinite' : 'none' }} />
+                {loadingEstoqueNS ? 'Sincronizando estoque...' : 'Sincronizar Estoque Nuvemshop'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Card Estoque Tiny */}
         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: 24 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
             <div style={{ width: 42, height: 42, borderRadius: 10, background: 'var(--vinho-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -202,6 +250,7 @@ export default function Sincronizacao() {
                       <>
                         {log.result.importados !== undefined && `${log.result.importados} importados`}
                         {log.result.atualizados !== undefined && `${log.result.atualizados} atualizados`}
+                        {log.result.variacoes_atualizadas !== undefined && `${log.result.variacoes_atualizadas} variações · ${log.result.produtos_processados || 0} produtos`}
                         {log.result.skus_mapeados !== undefined && ` · ${log.result.skus_mapeados} SKUs mapeados`}
                         {log.result.erros > 0 && ` · ${log.result.erros} erros`}
                       </>

@@ -8,7 +8,7 @@ const supabase = createClient(
 )
 
 const claude = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY || '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',
+  apiKey: process.env.ANTHROPIC_API_KEY,
 })
 
 const STORE_ID = '7344725'

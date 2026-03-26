@@ -72,7 +72,8 @@ export interface ProdutoComCount extends Produto {
 }
 
 export async function buscarProdutos(busca = '', categoria = ''): Promise<ProdutoComCount[]> {
-  let q = supabase.from('produtos').select('*').eq('ativo', true).order('nome')
+  // Filtra apenas produtos pai (com nuvemshop_id), excluindo variações do Tiny
+  let q = supabase.from('produtos').select('*').eq('ativo', true).not('nuvemshop_id', 'is', null).order('nome')
   if (busca.trim()) q = q.or(`nome.ilike.%${busca}%,sku.ilike.%${busca}%`)
   if (categoria) q = q.eq('categoria', categoria)
   const { data: prods } = await q.limit(300)

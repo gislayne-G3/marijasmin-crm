@@ -8,9 +8,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY!
 )
 
-const claude = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-})
+// Inicializado dentro do handler para evitar crash no module load quando env var ausente
 
 const STORE_ID = process.env.NUVEMSHOP_STORE_ID || '7344725'
 const TOKEN = process.env.NUVEMSHOP_ACCESS_TOKEN!
@@ -53,6 +51,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const userId = await requireAuth(req, res)
   if (!userId) return
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return res.status(500).json({ error: 'ANTHROPIC_API_KEY não configurada no servidor. Configure no Vercel → Environment Variables.' })
+  }
+
+  const claude = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
   const { produto_id } = req.body
   if (!produto_id) return res.status(400).json({ error: 'produto_id obrigatório' })

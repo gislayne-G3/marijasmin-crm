@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutGrid, Package, Users, Link2, LogOut, ShoppingBag, RefreshCw, ShoppingCart, MessageCircle } from 'lucide-react'
+import { LayoutGrid, Package, Users, Link2, LogOut, ShoppingBag, RefreshCw, ShoppingCart, MessageCircle, UserCheck } from 'lucide-react'
 import { logout } from '../lib/auth'
 
 const nav = [
@@ -8,6 +8,7 @@ const nav = [
   { to: '/clientes',     icon: Users,       label: 'Clientes' },
   { to: '/pedidos',      icon: ShoppingCart,   label: 'Pedidos' },
   { to: '/atendimento', icon: MessageCircle, label: 'Atendimento' },
+  { to: '/vendedora',   icon: UserCheck,     label: 'Meu Painel' },
   { to: '/sincronizacao', icon: RefreshCw,   label: 'Sincronização' },
   { to: '/linktree',     icon: Link2,       label: 'Linktree' },
 ]

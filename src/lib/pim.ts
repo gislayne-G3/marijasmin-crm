@@ -156,27 +156,64 @@ export function gerarHtmlDescricao(
   medidas: ProdutoMedida[],
   campos: string[]
 ): string {
-  const fotosSections = cores.slice(0, 1).map((cor: ProdutoCor) => {
-    const slots = [
-      cor.foto_frente ? `<img src="${cor.foto_frente}" class="foto-redonda" alt="Frente ${cor.cor}" />` : '',
-      cor.foto_costas ? `<img src="${cor.foto_costas}" class="foto-redonda" alt="Costas ${cor.cor}" />` : '',
-      cor.foto_detalhe ? `<img src="${cor.foto_detalhe}" class="foto-redonda" alt="Detalhe ${cor.cor}" />` : '',
-    ].filter(Boolean)
-    if (!slots.length) return ''
-    return `<div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:20px 0">${slots.join('')}</div>`
-  }).join('')
+  // Coleta fotos da primeira cor disponível (frente → costas → detalhe)
+  const cor = cores[0]
+  const fotosDisp: string[] = []
+  if (cor) {
+    if (cor.foto_frente)  fotosDisp.push(cor.foto_frente)
+    if (cor.foto_costas)  fotosDisp.push(cor.foto_costas)
+    if (cor.foto_detalhe) fotosDisp.push(cor.foto_detalhe)
+  }
+
+  // Injeta uma foto circular DENTRO de cada <div class="secao-foto">
+  // (float:right, pequena, entre o texto — como num e-commerce real)
+  let fotoIdx = 0
+  const htmlComFotos = descricaoHtml.replace(/<div class="secao-foto">/g, () => {
+    const foto = fotosDisp[fotoIdx]
+    fotoIdx++
+    if (!foto) return '<div class="secao-foto">'
+    const fotoTag = `<img src="${foto}" style="width:130px;height:130px;border-radius:50%;object-fit:cover;float:right;margin:0 0 12px 18px;border:3px solid #f0e8ed;flex-shrink:0" alt="Foto do produto" />`
+    return `<div class="secao-foto" style="overflow:hidden">${fotoTag}`
+  })
+
+  // Limpa float ao final de cada seção
+  const htmlFinal = htmlComFotos
+    .replace(/<\/div>/g, (match, offset, str) => {
+      // Adiciona clearfix apenas nas secao-foto
+      const antes = str.substring(0, offset)
+      const ultimaAbertura = antes.lastIndexOf('<div class="secao-foto"')
+      const ultimoFechamento = antes.lastIndexOf('</div>')
+      if (ultimaAbertura > ultimoFechamento) {
+        return '<div style="clear:both"></div></div>'
+      }
+      return match
+    })
+
+  // Tabela de medidas — SÓ aparece se tiver ao menos um campo preenchido
+  const temMedida = medidas.some(m =>
+    campos.some(c => m.medidas?.[c] && String(m.medidas[c]).trim() !== '' && String(m.medidas[c]).trim() !== '0')
+  )
+
+  if (!temMedida) return htmlFinal
 
   const tabelaRows = medidas.map(m =>
-    `<tr><td>${m.tamanho}</td>${campos.map(c => `<td>${m.medidas[c] || '—'}cm</td>`).join('')}</tr>`
+    `<tr><td style="font-weight:700;padding:8px 12px;border-bottom:1px solid #f0e8ed">${m.tamanho}</td>${
+      campos.map(c => `<td style="padding:8px 12px;border-bottom:1px solid #f0e8ed;text-align:center">${m.medidas[c] ? m.medidas[c] + 'cm' : '—'}</td>`).join('')
+    }</tr>`
   ).join('')
 
-  const tabelaHtml = tabelaRows ? `
-<h3 style="font-size:14px;font-weight:700;color:#0e2955;margin:20px 0 8px">TABELA DE MEDIDAS</h3>
-<table class="tabela-medidas">
-  <thead><tr><th>Tamanho</th>${campos.map(c => `<th>${LABEL_MEDIDAS[c] || c}</th>`).join('')}</tr></thead>
+  const tabelaHtml = `
+<div style="margin-top:24px;clear:both">
+<h3 style="font-size:14px;font-weight:700;color:#0e2955;margin:0 0 10px;text-transform:uppercase;letter-spacing:0.5px">Tabela de Medidas</h3>
+<table style="width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:8px;overflow:hidden;border:1px solid #f0e8ed">
+  <thead><tr style="background:#0e2955;color:white">
+    <th style="padding:9px 12px;text-align:left;font-size:12px">Tamanho</th>
+    ${campos.map(c => `<th style="padding:9px 12px;text-align:center;font-size:12px">${LABEL_MEDIDAS[c] || c}</th>`).join('')}
+  </tr></thead>
   <tbody>${tabelaRows}</tbody>
 </table>
-<p style="font-size:11px;color:#9c8fa0;margin-top:4px">* Medidas em centímetros. Use como referência.</p>` : ''
+<p style="font-size:11px;color:#9c8fa0;margin-top:6px">* Medidas em centímetros. Use como referência.</p>
+</div>`
 
-  return `${descricaoHtml}${fotosSections}${tabelaHtml}`
+  return htmlFinal + tabelaHtml
 }

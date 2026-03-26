@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useDark } from '../hooks/useDark'
 import {
   Settings, Users, MessageSquare, Target, Link2, Plus,
-  Trash2, Edit3, Check, X, RefreshCw, Wifi, WifiOff,
+  Edit3, Check, X, Wifi, WifiOff,
   Save, Eye, EyeOff, Download,
 } from 'lucide-react'
 

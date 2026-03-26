@@ -346,7 +346,6 @@ export default function Atendimento() {
   }, [mensagens])
 
   const statusColor = { resolvido: '#16a34a', aguardando: '#d97706', urgente: '#dc2626' }
-  const statusLabel = { resolvido: 'Resolvido', aguardando: 'Aguardando', urgente: 'Urgente' }
 
   const conversaAtual = selecionada ? conversas.find(c => c.telefone === selecionada) : null
 

@@ -3,9 +3,9 @@ import { supabase } from '../lib/supabase'
 import { apiFetch } from '../lib/api'
 import { useDark } from '../hooks/useDark'
 import {
-  Target, TrendingUp, Users, BarChart3, ArrowUpRight, ArrowDownRight,
-  AlertTriangle, Trophy, Send, Bot, RefreshCw, Check, Edit3,
-  ShoppingBag, Repeat, ChevronDown, ChevronUp, Star,
+  Target, BarChart3, ArrowUpRight, ArrowDownRight,
+  Trophy, Send, Bot, RefreshCw, Check, Edit3,
+  Repeat, Star,
 } from 'lucide-react'
 
 /* ─── TYPES ─── */

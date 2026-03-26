@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import {
-  Target, TrendingUp, DollarSign, Calendar,
-  Phone, MessageCircle, Gift, AlertCircle,
-  Search, ChevronRight, Clock, Star,
+  Target, DollarSign, Calendar,
+  Phone, Search, Clock, Star,
 } from 'lucide-react'
 import { useDark, useStatusCores } from '../hooks/useDark'
 
@@ -81,8 +80,8 @@ function diasEntre(d1: string, d2: Date) {
 /* ─── COMPONENT ─── */
 export default function PainelVendedora() {
   const dark = useDark()
-  const statusCores = useStatusCores()
-  const [vendedoraId, setVendedoraId] = useState<number | null>(null)
+  const _statusCores = useStatusCores()
+  const [_vendedoraId, setVendedoraId] = useState<number | null>(null)
   const [vendedoraNome, setVendedoraNome] = useState('')
   const [meta, setMeta] = useState<MetaVendedora | null>(null)
   const [comissoes, setComissoes] = useState<Comissao[]>([])
@@ -114,7 +113,7 @@ export default function PainelVendedora() {
     if (!vendedora || vendedora.length === 0) { setLoading(false); return }
 
     // Tentar match por auth_user_id primeiro
-    let v = vendedora.find((vd: { id: number }) => {
+    let v = vendedora.find((_vd: { id: number }) => {
       return false // auth_user_id precisa ser configurado
     })
 

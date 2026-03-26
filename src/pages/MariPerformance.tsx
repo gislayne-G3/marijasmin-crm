@@ -350,7 +350,7 @@ export default function MariPerformance() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 0', background: dark ? 'rgba(220,38,38,0.10)' : '#fef2f2', borderRadius: 10, padding: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', background: dark ? 'rgba(220,38,38,0.10)' : '#fef2f2', borderRadius: 10, padding: '14px' }}>
                 <span style={{ fontSize: 13, fontWeight: 700, color: '#dc2626' }}>CUSTO TOTAL DO MÊS</span>
                 <span style={{ fontSize: 18, fontWeight: 800, color: '#dc2626' }}>{fmtMoeda(statsMes.custo_total)}</span>
               </div>

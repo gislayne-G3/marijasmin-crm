@@ -13,6 +13,7 @@
     "api/tiny-reservar-estoque.ts":    { "maxDuration": 60 },
     "api/metas-distribuir.ts":         { "maxDuration": 60 },
     "api/metas-aprovar.ts":            { "maxDuration": 30 },
-    "api/comissoes-calcular.ts":       { "maxDuration": 120 }
+    "api/comissoes-calcular.ts":       { "maxDuration": 120 },
+    "api/agente-fiscal.ts":            { "maxDuration": 120 }
   }
 }

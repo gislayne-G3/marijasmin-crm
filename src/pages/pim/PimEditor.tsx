@@ -6,6 +6,7 @@ import {
   TAMANHOS, CAMPOS_MEDIDAS, LABEL_MEDIDAS,
   type Produto, type ProdutoCor, type ProdutoVariacao, type ProdutoMedida,
 } from '../../lib/pim'
+import { apiPost } from '../../lib/api'
 import { ArrowLeft, Sparkles, Save, Plus, Trash2, Upload, Eye, ScanSearch } from 'lucide-react'
 
 type SlotFoto = 'foto_frente' | 'foto_costas' | 'foto_detalhe'
@@ -123,11 +124,7 @@ export default function PimEditor() {
     setAnalisando(true)
     setStatus('🔍 Analisando fotos com IA (pode levar ~30s)...')
     try {
-      const res = await fetch('/api/pim-analisar-fotos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ produto_id: prodId }),
-      })
+      const res = await apiPost('/api/pim-analisar-fotos', { produto_id: prodId })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Erro na análise')
 
@@ -153,15 +150,11 @@ export default function PimEditor() {
     setGerando(true)
     setStatus('Gerando descrição com IA...')
     try {
-      const res = await fetch('/api/gerar-descricao', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nome: produto.nome,
-          categoria: produto.categoria,
-          cores: cores.map(c => c.cor),
-          descricao_atual: produto.descricao || '',
-        }),
+      const res = await apiPost('/api/gerar-descricao', {
+        nome: produto.nome,
+        categoria: produto.categoria,
+        cores: cores.map(c => c.cor),
+        descricao_atual: produto.descricao || '',
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
@@ -195,19 +188,15 @@ export default function PimEditor() {
         // Passo 1: sincroniza descrição + preço + estoque
         setStatus('Sincronizando descrição e preços na Nuvemshop...')
         const variacoesComId = variacoes.filter(v => v.nuvemshop_variant_id)
-        const resSync = await fetch('/api/pim-sync-nuvemshop', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            nuvemshop_id: produto.nuvemshop_id,
-            descricao: htmlFinal,
-            preco_varejo: produto.preco_varejo,
-            preco_atacado: produto.preco_atacado,
-            variacoes: variacoesComId.map(v => ({
-              nuvemshop_variant_id: v.nuvemshop_variant_id,
-              estoque: v.estoque,
-            })),
-          }),
+        const resSync = await apiPost('/api/pim-sync-nuvemshop', {
+          nuvemshop_id: produto.nuvemshop_id,
+          descricao: htmlFinal,
+          preco_varejo: produto.preco_varejo,
+          preco_atacado: produto.preco_atacado,
+          variacoes: variacoesComId.map(v => ({
+            nuvemshop_variant_id: v.nuvemshop_variant_id,
+            estoque: v.estoque,
+          })),
         })
         const dataSync = await resSync.json()
 
@@ -215,11 +204,7 @@ export default function PimEditor() {
         const coresComFoto = cores.filter(c => c.foto_frente)
         if (coresComFoto.length > 0) {
           setStatus('Enviando fotos para a Nuvemshop (foto por cor)...')
-          await fetch('/api/pim-sync-fotos-nuvemshop', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ produto_id: prodId }),
-          })
+          await apiPost('/api/pim-sync-fotos-nuvemshop', { produto_id: prodId })
         }
 
         if (dataSync.erros?.length) {

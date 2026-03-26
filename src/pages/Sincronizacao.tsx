@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { RefreshCw, Package, ShoppingCart, CheckCircle2, AlertCircle, Clock, Store, Download, Zap, Copy, Check } from 'lucide-react'
+import { apiPost } from '../lib/api'
 
 interface SyncResult {
   ok: boolean
@@ -40,7 +41,7 @@ export default function Sincronizacao() {
   async function importarNovos() {
     setLoadingImportNovos(true)
     try {
-      const res = await fetch('/api/nuvemshop-import-novos', { method: 'POST' })
+      const res = await apiPost('/api/nuvemshop-import-novos')
       const result: SyncResult = await res.json()
       setLogs(prev => [{ tipo: 'Novos Produtos', result, timestamp: new Date().toLocaleTimeString('pt-BR') }, ...prev])
     } catch (e) {
@@ -52,7 +53,7 @@ export default function Sincronizacao() {
   async function syncEstoqueNuvemshop() {
     setLoadingEstoqueNS(true)
     try {
-      const res = await fetch('/api/nuvemshop-sync-estoque', { method: 'POST' })
+      const res = await apiPost('/api/nuvemshop-sync-estoque')
       const result: SyncResult = await res.json()
       setLogs(prev => [{ tipo: 'Estoque Nuvemshop', result, timestamp: new Date().toLocaleTimeString('pt-BR') }, ...prev])
     } catch (e) {
@@ -64,7 +65,7 @@ export default function Sincronizacao() {
   async function syncEstoque() {
     setLoadingEstoque(true)
     try {
-      const res = await fetch('/api/tiny-sync-estoque', { method: 'POST' })
+      const res = await apiPost('/api/tiny-sync-estoque')
       const result: SyncResult = await res.json()
       setLogs(prev => [{ tipo: 'Estoque', result, timestamp: new Date().toLocaleTimeString('pt-BR') }, ...prev])
     } catch (e) {
@@ -76,11 +77,7 @@ export default function Sincronizacao() {
   async function syncPedidos() {
     setLoadingPedidos(true)
     try {
-      const res = await fetch('/api/tiny-sync-pedidos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pagina_inicio: paginaInicio, pagina_fim: paginaFim }),
-      })
+      const res = await apiPost('/api/tiny-sync-pedidos', { pagina_inicio: paginaInicio, pagina_fim: paginaFim })
       const result: SyncResult = await res.json()
       setLogs(prev => [{ tipo: 'Pedidos', result, timestamp: new Date().toLocaleTimeString('pt-BR') }, ...prev])
     } catch (e) {

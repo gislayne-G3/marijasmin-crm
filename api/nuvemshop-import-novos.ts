@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createClient } from '@supabase/supabase-js'
+import { requireAuth } from './_auth'
 
 const STORE_ID = process.env.NUVEMSHOP_STORE_ID || '7344725'
 const TOKEN   = process.env.NUVEMSHOP_ACCESS_TOKEN!
@@ -44,6 +45,9 @@ function parseVariant(variant: Record<string, unknown>): { cor: string; tamanho:
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
+
+  const userId = await requireAuth(req, res)
+  if (!userId) return
 
   // 1. Busca nuvemshop_ids já no Supabase
   const { data: existentes } = await supabase

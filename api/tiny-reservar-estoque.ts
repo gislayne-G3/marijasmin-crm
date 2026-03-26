@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createClient } from '@supabase/supabase-js'
+import { requireAuth } from './_auth'
 
 const supabase = createClient(
   process.env.VITE_SUPABASE_URL!,
@@ -13,6 +14,9 @@ const NUVEMSHOP_BASE = `https://api.tiendanube.com/v1/${NUVEMSHOP_STORE_ID}`
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
+
+  const userId = await requireAuth(req, res)
+  if (!userId) return
 
   try {
     const { tiny_id } = req.body

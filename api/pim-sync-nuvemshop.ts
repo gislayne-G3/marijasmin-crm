@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { requireAuth } from './_auth'
 
 const STORE_ID = process.env.NUVEMSHOP_STORE_ID || '7344725'
 const TOKEN    = process.env.NUVEMSHOP_ACCESS_TOKEN!
@@ -21,6 +22,9 @@ async function ns(method: string, path: string, body?: object) {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
+
+  const userId = await requireAuth(req, res)
+  if (!userId) return
 
   const { nuvemshop_id, descricao, preco_varejo, preco_atacado, variacoes } = req.body
 

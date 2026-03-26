@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createClient } from '@supabase/supabase-js'
+import { requireAuth } from './_auth'
 
 const TINY_TOKEN = process.env.TINY_API_TOKEN!
 const supabase = createClient(
@@ -20,6 +21,9 @@ async function tinyGet(endpoint: string, params: Record<string, string>) {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
+
+  const userId = await requireAuth(req, res)
+  if (!userId) return
 
   // 1. Busca todas as variações do Supabase que têm SKU
   const { data: variacoes } = await supabase

@@ -63,6 +63,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Tiny envia form-encoded POST com campo "dados" contendo JSON do pedido
   // Responde sempre 200 para o Tiny não retentar
 
+  const webhookSecret = req.headers['x-tiny-secret'] || req.headers['x-webhook-token']
+  if (webhookSecret !== process.env.INTERNAL_API_SECRET) {
+    return res.status(401).json({ error: 'Unauthorized webhook' })
+  }
+
   let dadosRaw = req.body?.dados || req.query?.dados
   if (!dadosRaw) {
     return res.status(200).json({ ok: true, msg: 'Webhook recebido — sem campo dados' })

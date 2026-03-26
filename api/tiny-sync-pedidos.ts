@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createClient } from '@supabase/supabase-js'
+import { requireAuth } from './_auth'
 
 const TINY_TOKEN = process.env.TINY_API_TOKEN!
 const supabase = createClient(
@@ -41,6 +42,9 @@ function normalizeStatus(situacao: string): string {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
+
+  const userId = await requireAuth(req, res)
+  if (!userId) return
 
   const { pagina_inicio = 1, pagina_fim = 10, situacao = '' } = req.body || {}
 

@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createClient } from '@supabase/supabase-js'
 import Anthropic from '@anthropic-ai/sdk'
+import { requireAuth } from './_auth'
 
 const supabase = createClient(
   process.env.VITE_SUPABASE_URL!,
@@ -49,6 +50,9 @@ function mediaTypeFromUrl(url: string): 'image/jpeg' | 'image/png' | 'image/webp
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
+
+  const userId = await requireAuth(req, res)
+  if (!userId) return
 
   const { produto_id } = req.body
   if (!produto_id) return res.status(400).json({ error: 'produto_id obrigatório' })

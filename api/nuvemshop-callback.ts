@@ -57,7 +57,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       })
     }
 
-    // Retorna página de sucesso com as credenciais
+    // Retorna página de sucesso sem exibir credenciais sensíveis
     return res.status(200).send(`
       <html>
         <head>
@@ -67,18 +67,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             .card { background: white; border-radius: 16px; padding: 40px; max-width: 500px; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
             h2 { color: #8e2753; margin-bottom: 8px; }
             p { color: #6b5b6e; }
-            .badge { background: #f0f7f0; color: #2d7a2d; padding: 8px 16px; border-radius: 8px; font-size: 14px; margin: 8px 0; display: inline-block; }
-            .code { background: #f0eef0; padding: 12px 16px; border-radius: 8px; font-family: monospace; font-size: 12px; word-break: break-all; text-align: left; margin: 8px 0; }
             a { display: inline-block; margin-top: 24px; background: #8e2753; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; }
           </style>
         </head>
         <body>
           <div class="card">
-            <h2>✅ Nuvemshop conectada!</h2>
-            <p>A integração foi autorizada com sucesso.</p>
-            <div class="badge">Store ID: ${user_id}</div>
-            <div class="code">Access Token: ${access_token}</div>
-            <p style="font-size:12px;color:#9c8fa0">Guarde esses dados ou copie abaixo e me mande no chat.</p>
+            <h2>✅ Integração Nuvemshop configurada com sucesso!</h2>
+            <p>Você já pode fechar esta janela.</p>
             <a href="https://marijasmin-crm.vercel.app">Ir para o CRM →</a>
           </div>
         </body>

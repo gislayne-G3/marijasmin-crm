@@ -6,8 +6,8 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY!
 )
 
-const TINY_TOKEN = process.env.TINY_TOKEN || '77e08beec1001892e10c07d6be71c8d8f42b8767'
-const NUVEMSHOP_TOKEN = process.env.NUVEMSHOP_TOKEN || ''
+const TINY_TOKEN = process.env.TINY_API_TOKEN!
+const NUVEMSHOP_TOKEN = process.env.NUVEMSHOP_ACCESS_TOKEN!
 const NUVEMSHOP_STORE_ID = '7344725'
 const NUVEMSHOP_BASE = `https://api.tiendanube.com/v1/${NUVEMSHOP_STORE_ID}`
 

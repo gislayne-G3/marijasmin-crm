@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 const STORE_ID = process.env.NUVEMSHOP_STORE_ID || '7344725'
-const TOKEN    = process.env.NUVEMSHOP_ACCESS_TOKEN || '694aa8241f0ec24313353af9acfdbab13a85181b'
+const TOKEN    = process.env.NUVEMSHOP_ACCESS_TOKEN!
 const UA       = 'Ecossistema Marijasmin (gislayne.marijasmin@gmail.com)'
 
 async function ns(method: string, path: string, body?: object) {

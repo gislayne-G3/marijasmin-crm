@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 const APP_ID = process.env.NUVEMSHOP_APP_ID || '28487'
-const CLIENT_SECRET = process.env.NUVEMSHOP_CLIENT_SECRET || '1b5bb1e627b1639535f961d6823f1ff08702db23eb2582f9'
+const CLIENT_SECRET = process.env.NUVEMSHOP_CLIENT_SECRET!
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL || ''
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 

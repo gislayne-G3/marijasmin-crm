@@ -1,10 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createClient } from '@supabase/supabase-js'
 
-const TINY_TOKEN = process.env.TINY_API_TOKEN || '77e08beec1001892e10c07d6be71c8d8f42b8767'
+const TINY_TOKEN = process.env.TINY_API_TOKEN!
 const supabase = createClient(
-  process.env.SUPABASE_URL || 'https://oovdayewoaeyaolzoesq.supabase.co',
-  process.env.SUPABASE_SERVICE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vdmRheWV3b2FleWFvbHpvZXNxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Mzg4ODY1MSwiZXhwIjoyMDg5NDY0NjUxfQ.QwcadJOBZgZNT2FnHGzotgZEVRPgWrg3LzI41Xa6QzM'
+  process.env.VITE_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_KEY!
 )
 
 async function tinyGet(endpoint: string, params: Record<string, string>) {

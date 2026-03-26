@@ -4,7 +4,7 @@ import {
   Target, DollarSign, Calendar,
   Phone, Search, Clock, Star,
 } from 'lucide-react'
-import { useDark, useStatusCores } from '../hooks/useDark'
+import { useDark } from '../hooks/useDark'
 
 /* ─── TYPES ─── */
 interface MetaVendedora {
@@ -80,7 +80,6 @@ function diasEntre(d1: string, d2: Date) {
 /* ─── COMPONENT ─── */
 export default function PainelVendedora() {
   const dark = useDark()
-  const _statusCores = useStatusCores()
   const [_vendedoraId, setVendedoraId] = useState<number | null>(null)
   const [vendedoraNome, setVendedoraNome] = useState('')
   const [meta, setMeta] = useState<MetaVendedora | null>(null)

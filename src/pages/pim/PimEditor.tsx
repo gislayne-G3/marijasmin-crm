@@ -6,7 +6,7 @@ import {
   TAMANHOS, CAMPOS_MEDIDAS, LABEL_MEDIDAS,
   type Produto, type ProdutoCor, type ProdutoVariacao, type ProdutoMedida,
 } from '../../lib/pim'
-import { ArrowLeft, Sparkles, Save, Plus, Trash2, Upload, Eye } from 'lucide-react'
+import { ArrowLeft, Sparkles, Save, Plus, Trash2, Upload, Eye, ScanSearch } from 'lucide-react'
 
 type SlotFoto = 'foto_frente' | 'foto_costas' | 'foto_detalhe'
 const SLOTS: { key: SlotFoto; label: string }[] = [
@@ -25,6 +25,7 @@ export default function PimEditor() {
   const [loading, setLoading] = useState(true)
   const [salvando, setSalvando] = useState(false)
   const [gerando, setGerando] = useState(false)
+  const [analisando, setAnalisando] = useState(false)
   const [preview, setPreview] = useState(false)
   const [status, setStatus] = useState<string | null>(null)
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({})
@@ -113,6 +114,36 @@ export default function PimEditor() {
       setStatus(null)
     } catch {
       setStatus('Erro ao enviar foto')
+    }
+  }
+
+  // Analisar fotos com IA (Claude Vision)
+  async function analisarFotos() {
+    if (!produto) return
+    setAnalisando(true)
+    setStatus('🔍 Analisando fotos com IA (pode levar ~30s)...')
+    try {
+      const res = await fetch('/api/pim-analisar-fotos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ produto_id: prodId }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro na análise')
+
+      // Recarrega dados do produto (cores, medidas atualizadas)
+      const { cores: c, variacoes: v, medidas: m } = await buscarProduto(prodId).then(d => d)
+      setCores(c.length ? c : cores)
+      if (v.length) setVariacoes(v)
+      if (m.length) setMedidas(m)
+
+      const msg = `✅ ${data.fotos_analisadas} fotos analisadas · ${data.cores_atualizadas?.length || 0} cores · ${data.tabela_medidas_extraida ? 'Medidas extraídas!' : 'Sem tabela de medidas'}`
+      setStatus(msg)
+      setTimeout(() => setStatus(null), 5000)
+    } catch (e: unknown) {
+      setStatus(`Erro: ${e instanceof Error ? e.message : 'falha na análise'}`)
+    } finally {
+      setAnalisando(false)
     }
   }
 
@@ -211,6 +242,9 @@ export default function PimEditor() {
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           {status && <span style={{ fontSize: 12, color: status.includes('Erro') ? 'var(--danger)' : 'var(--success)', fontWeight: 600 }}>{status}</span>}
+          <button onClick={analisarFotos} disabled={analisando} style={{ ...btnSecondary, color: 'var(--vinho)', borderColor: 'var(--vinho)' }}>
+            <ScanSearch size={14} /> {analisando ? 'Analisando...' : '🤖 Analisar Fotos'}
+          </button>
           <button onClick={() => setPreview(!preview)} style={btnSecondary}>
             <Eye size={14} /> Preview
           </button>

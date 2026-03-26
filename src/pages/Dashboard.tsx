@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { Package, Users, ShoppingBag, AlertTriangle, TrendingUp, Clock, XCircle, ArrowRight } from 'lucide-react'
+import { useDark, useStatusCores } from '../hooks/useDark'
 
 interface Stats {
   produtos: number
@@ -40,16 +41,9 @@ function fmtDate(d: string) {
   return new Date(d).toLocaleDateString('pt-BR')
 }
 
-const STATUS_COR: Record<string, { color: string; bg: string }> = {
-  aprovado:  { color: '#16a34a', bg: '#dcfce7' },
-  faturado:  { color: '#0e7490', bg: '#cffafe' },
-  enviado:   { color: '#7c3aed', bg: '#ede9fe' },
-  entregue:  { color: '#15803d', bg: '#bbf7d0' },
-  cancelado: { color: '#dc2626', bg: '#fee2e2' },
-  pendente:  { color: '#d97706', bg: '#fef9c3' },
-}
-
 export default function Dashboard() {
+  const dark = useDark()
+  const STATUS_COR = useStatusCores()
   const [stats, setStats] = useState<Stats>({
     produtos: 0, semDescricao: 0,
     clientes: 0, ativo: 0, esfriando: 0, inativo: 0, perdido: 0,
@@ -122,7 +116,7 @@ export default function Dashboard() {
       {/* Faturamento — Cards principais */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
         {/* Faturamento Histórico */}
-        <div style={{ background: 'linear-gradient(135deg, #0e2955, #1a4080)', borderRadius: 16, padding: '22px 24px', color: 'white' }}>
+        <div style={{ background: dark ? 'linear-gradient(135deg, #12121A, #1A1A30)' : 'linear-gradient(135deg, #0e2955, #1a4080)', borderRadius: 16, padding: '22px 24px', color: 'white', border: dark ? '1px solid rgba(26,58,122,0.4)' : 'none' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
             <TrendingUp size={16} color="rgba(255,255,255,0.7)" />
             <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>
@@ -136,7 +130,7 @@ export default function Dashboard() {
         </div>
 
         {/* Últimos 30 dias */}
-        <div style={{ background: 'linear-gradient(135deg, #8e2753, #b03366)', borderRadius: 16, padding: '22px 24px', color: 'white' }}>
+        <div style={{ background: dark ? 'linear-gradient(135deg, #1A0A15, #2A1225)' : 'linear-gradient(135deg, #8e2753, #b03366)', borderRadius: 16, padding: '22px 24px', color: 'white', border: dark ? '1px solid rgba(196,77,138,0.4)' : 'none', boxShadow: dark ? '0 0 20px rgba(196,77,138,0.15)' : 'none' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
             <Calendar30 />
             <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>
@@ -201,12 +195,12 @@ export default function Dashboard() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
             {[
-              { label: 'Ativos', val: stats.ativo, color: '#16a34a' },
-              { label: 'Esfriando', val: stats.esfriando, color: '#d97706' },
-              { label: 'Inativos', val: stats.inativo, color: '#6b7280' },
-              { label: 'Perdidos', val: stats.perdido, color: '#dc2626' },
+              { label: 'Ativos', val: stats.ativo, color: dark ? '#22d46a' : '#16a34a' },
+              { label: 'Esfriando', val: stats.esfriando, color: dark ? '#f5a623' : '#d97706' },
+              { label: 'Inativos', val: stats.inativo, color: dark ? '#6B6B8A' : '#6b7280' },
+              { label: 'Perdidos', val: stats.perdido, color: dark ? '#f04848' : '#dc2626' },
             ].map(({ label, val, color }) => (
-              <div key={label} style={{ textAlign: 'center', padding: '8px 4px', background: `${color}10`, borderRadius: 8 }}>
+              <div key={label} style={{ textAlign: 'center', padding: '8px 4px', background: `${color}${dark ? '18' : '10'}`, borderRadius: 8 }}>
                 <p style={{ fontSize: 15, fontWeight: 700, color, margin: 0 }}>{val.toLocaleString('pt-BR')}</p>
                 <p style={{ fontSize: 10, color, margin: '2px 0 0', fontWeight: 500 }}>{label}</p>
               </div>
@@ -238,7 +232,7 @@ export default function Dashboard() {
             </div>
             <div
               onClick={() => navigate('/pim')}
-              style={{ background: stats.semDescricao > 0 ? '#fef9c3' : 'var(--bg)', border: stats.semDescricao > 0 ? '1px solid #fde047' : '1px solid transparent', borderRadius: 10, padding: '14px 16px', cursor: 'pointer' }}
+              style={{ background: stats.semDescricao > 0 ? (dark ? 'rgba(245,166,35,0.1)' : '#fef9c3') : 'var(--bg)', border: stats.semDescricao > 0 ? (dark ? '1px solid rgba(245,166,35,0.3)' : '1px solid #fde047') : '1px solid transparent', borderRadius: 10, padding: '14px 16px', cursor: 'pointer' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 2 }}>
                 <p style={{ fontSize: 22, fontWeight: 800, color: stats.semDescricao > 0 ? '#d97706' : 'var(--azul)', margin: 0 }}>
@@ -331,23 +325,26 @@ export default function Dashboard() {
         <div
           onClick={() => navigate('/clientes')}
           style={{
-            marginTop: 16, background: '#fee2e2', border: '1px solid #fca5a5',
+            marginTop: 16,
+            background: dark ? 'rgba(240,72,72,0.1)' : '#fee2e2',
+            border: dark ? '1px solid rgba(240,72,72,0.3)' : '1px solid #fca5a5',
             borderRadius: 14, padding: '16px 20px', cursor: 'pointer',
             display: 'flex', alignItems: 'center', gap: 14,
+            boxShadow: dark ? '0 0 12px rgba(240,72,72,0.15)' : 'none',
           }}
         >
-          <div style={{ width: 36, height: 36, borderRadius: 10, background: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: dark ? '#f04848' : '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <XCircle size={18} color="white" />
           </div>
           <div style={{ flex: 1 }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: '#991b1b', margin: 0 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: dark ? '#f04848' : '#991b1b', margin: 0 }}>
               {stats.perdido.toLocaleString('pt-BR')} clientes perdidos precisam de atenção
             </p>
-            <p style={{ fontSize: 12, color: '#b91c1c', margin: '2px 0 0' }}>
+            <p style={{ fontSize: 12, color: dark ? '#f07070' : '#b91c1c', margin: '2px 0 0' }}>
               Clique para ver a lista e recuperar esses clientes via campanha de reativação
             </p>
           </div>
-          <ArrowRight size={16} color="#dc2626" />
+          <ArrowRight size={16} color={dark ? '#f04848' : '#dc2626'} />
         </div>
       )}
 
@@ -356,23 +353,26 @@ export default function Dashboard() {
         <div
           onClick={() => navigate('/clientes')}
           style={{
-            marginTop: 10, background: '#fef9c3', border: '1px solid #fde047',
+            marginTop: 10,
+            background: dark ? 'rgba(245,166,35,0.1)' : '#fef9c3',
+            border: dark ? '1px solid rgba(245,166,35,0.3)' : '1px solid #fde047',
             borderRadius: 14, padding: '14px 20px', cursor: 'pointer',
             display: 'flex', alignItems: 'center', gap: 14,
+            boxShadow: dark ? '0 0 12px rgba(245,166,35,0.1)' : 'none',
           }}
         >
-          <div style={{ width: 34, height: 34, borderRadius: 10, background: '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ width: 34, height: 34, borderRadius: 10, background: dark ? '#f5a623' : '#d97706', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <Clock size={16} color="white" />
           </div>
           <div style={{ flex: 1 }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: '#92400e', margin: 0 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: dark ? '#f5a623' : '#92400e', margin: 0 }}>
               {stats.esfriando.toLocaleString('pt-BR')} clientes esfriando — reative antes que virem perdidos
             </p>
-            <p style={{ fontSize: 12, color: '#b45309', margin: '2px 0 0' }}>
+            <p style={{ fontSize: 12, color: dark ? '#f5c060' : '#b45309', margin: '2px 0 0' }}>
               Última compra entre 31-90 dias atrás
             </p>
           </div>
-          <ArrowRight size={16} color="#d97706" />
+          <ArrowRight size={16} color={dark ? '#f5a623' : '#d97706'} />
         </div>
       )}
     </div>

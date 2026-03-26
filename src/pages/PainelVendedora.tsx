@@ -5,6 +5,7 @@ import {
   Phone, MessageCircle, Gift, AlertCircle,
   Search, ChevronRight, Clock, Star,
 } from 'lucide-react'
+import { useDark, useStatusCores } from '../hooks/useDark'
 
 /* ─── TYPES ─── */
 interface MetaVendedora {
@@ -79,6 +80,8 @@ function diasEntre(d1: string, d2: Date) {
 
 /* ─── COMPONENT ─── */
 export default function PainelVendedora() {
+  const dark = useDark()
+  const statusCores = useStatusCores()
   const [vendedoraId, setVendedoraId] = useState<number | null>(null)
   const [vendedoraNome, setVendedoraNome] = useState('')
   const [meta, setMeta] = useState<MetaVendedora | null>(null)
@@ -442,8 +445,10 @@ export default function PainelVendedora() {
 
               {/* Frase motivacional */}
               <div style={{
-                background: meta.percentual_mensal >= 100 ? 'linear-gradient(135deg, #fef9c3, #fde68a)' : 'var(--surface)',
-                border: `1px solid ${meta.percentual_mensal >= 100 ? '#fde047' : 'var(--border)'}`,
+                background: meta.percentual_mensal >= 100
+                  ? (dark ? 'linear-gradient(135deg, rgba(245,166,35,0.12), rgba(253,230,138,0.15))' : 'linear-gradient(135deg, #fef9c3, #fde68a)')
+                  : 'var(--surface)',
+                border: `1px solid ${meta.percentual_mensal >= 100 ? (dark ? 'rgba(253,224,71,0.3)' : '#fde047') : 'var(--border)'}`,
                 borderRadius: 12, padding: '14px 18px', textAlign: 'center',
               }}>
                 <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--azul)', margin: 0 }}>
@@ -494,8 +499,16 @@ export default function PainelVendedora() {
                   </div>
                   <span style={{
                     fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 100, textAlign: 'center',
-                    background: c.status === 'pago' ? '#dcfce7' : c.status === 'aprovado' ? '#dbeafe' : '#f3f4f6',
-                    color: c.status === 'pago' ? '#16a34a' : c.status === 'aprovado' ? '#2563eb' : '#6b7280',
+                    background: c.status === 'pago'
+                      ? (dark ? 'rgba(34,212,106,0.12)' : '#dcfce7')
+                      : c.status === 'aprovado'
+                      ? (dark ? 'rgba(37,99,235,0.12)' : '#dbeafe')
+                      : (dark ? 'rgba(107,114,128,0.12)' : '#f3f4f6'),
+                    color: c.status === 'pago'
+                      ? (dark ? '#22d46a' : '#16a34a')
+                      : c.status === 'aprovado'
+                      ? (dark ? '#60a5fa' : '#2563eb')
+                      : (dark ? '#9ca3af' : '#6b7280'),
                   }}>
                     {c.status?.toUpperCase()}
                   </span>
@@ -612,8 +625,16 @@ export default function PainelVendedora() {
                 </div>
                 <span style={{
                   fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 100, textAlign: 'center',
-                  background: c.status === 'ativo' ? '#dcfce7' : c.status === 'esfriando' ? '#fef9c3' : '#fee2e2',
-                  color: c.status === 'ativo' ? '#16a34a' : c.status === 'esfriando' ? '#d97706' : '#dc2626',
+                  background: c.status === 'ativo'
+                    ? (dark ? 'rgba(34,212,106,0.12)' : '#dcfce7')
+                    : c.status === 'esfriando'
+                    ? (dark ? 'rgba(245,166,35,0.12)' : '#fef9c3')
+                    : (dark ? 'rgba(240,72,72,0.12)' : '#fee2e2'),
+                  color: c.status === 'ativo'
+                    ? (dark ? '#22d46a' : '#16a34a')
+                    : c.status === 'esfriando'
+                    ? (dark ? '#f5a623' : '#d97706')
+                    : (dark ? '#f04848' : '#dc2626'),
                 }}>
                   {c.status}
                 </span>
@@ -670,7 +691,11 @@ export default function PainelVendedora() {
                 <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--azul)' }}>{fmtMoeda(Number(p.valor_total))}</span>
                 <span style={{
                   fontSize: 10, fontWeight: 600,
-                  color: p.status === 'Aprovado' ? '#16a34a' : p.status === 'Cancelado' ? '#dc2626' : '#d97706',
+                  color: p.status === 'Aprovado'
+                    ? (dark ? '#22d46a' : '#16a34a')
+                    : p.status === 'Cancelado'
+                    ? (dark ? '#f04848' : '#dc2626')
+                    : (dark ? '#f5a623' : '#d97706'),
                 }}>
                   {p.status}
                 </span>

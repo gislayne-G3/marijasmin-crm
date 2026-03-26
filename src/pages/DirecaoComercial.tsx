@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { apiFetch } from '../lib/api'
+import { useDark } from '../hooks/useDark'
 import {
   Target, TrendingUp, Users, BarChart3, ArrowUpRight, ArrowDownRight,
   AlertTriangle, Trophy, Send, Bot, RefreshCw, Check, Edit3,
@@ -68,6 +69,7 @@ function fmtData(d: string) {
 
 /* ─── COMPONENT ─── */
 export default function DirecaoComercial() {
+  const dark = useDark()
   const [loading, setLoading] = useState(true)
   const [metaGeral, setMetaGeral] = useState<MetaGeral | null>(null)
   const [metasVendedoras, setMetasVendedoras] = useState<MetaVendedora[]>([])
@@ -400,7 +402,7 @@ export default function DirecaoComercial() {
                 </p>
               </div>
               <button onClick={distribuirMetas} disabled={distribuindo}
-                style={{ padding: '10px 20px', border: 'none', borderRadius: 8, background: distribuindo ? '#ccc' : 'var(--azul)', color: 'white', fontSize: 13, fontWeight: 700, cursor: distribuindo ? 'not-allowed' : 'pointer', fontFamily: 'Montserrat' }}>
+                style={{ padding: '10px 20px', border: 'none', borderRadius: 8, background: distribuindo ? (dark ? '#333' : '#ccc') : 'var(--azul)', color: 'white', fontSize: 13, fontWeight: 700, cursor: distribuindo ? 'not-allowed' : 'pointer', fontFamily: 'Montserrat' }}>
                 {distribuindo ? '⏳ Calculando...' : '🤖 Distribuir com IA'}
               </button>
             </>
@@ -548,7 +550,7 @@ export default function DirecaoComercial() {
               display: 'grid', gridTemplateColumns: '40px 2fr 120px 120px 80px 100px 100px',
               padding: '12px 0', gap: 8, alignItems: 'center',
               borderBottom: i < metasVendedoras.length - 1 ? '1px solid var(--border)' : 'none',
-              background: i === 0 ? '#fffbeb' : 'transparent',
+              background: i === 0 ? (dark ? 'rgba(217,119,6,0.1)' : '#fffbeb') : 'transparent',
             }}>
               <span style={{ fontSize: 14, fontWeight: 800, color: i === 0 ? '#d97706' : i === 1 ? '#9ca3af' : i === 2 ? '#b45309' : 'var(--text-muted)' }}>
                 {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}º`}
@@ -626,7 +628,7 @@ export default function DirecaoComercial() {
                   <span style={{ fontSize: 12, fontWeight: 600, color: '#dc2626' }}>{fmtMoeda(t.valor_total)}</span>
                   <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                     {t.motivos.map(m => (
-                      <span key={m} style={{ fontSize: 10, padding: '2px 6px', borderRadius: 100, background: '#fee2e2', color: '#dc2626' }}>{m}</span>
+                      <span key={m} style={{ fontSize: 10, padding: '2px 6px', borderRadius: 100, background: dark ? 'rgba(220,38,38,0.15)' : '#fee2e2', color: '#dc2626' }}>{m}</span>
                     ))}
                   </div>
                 </div>
@@ -653,7 +655,7 @@ export default function DirecaoComercial() {
               display: 'grid', gridTemplateColumns: '40px 2fr 120px 80px 100px 100px',
               padding: '10px 0', gap: 8, alignItems: 'center',
               borderBottom: i < vips.length - 1 ? '1px solid var(--border)' : 'none',
-              background: v.dias_sem_compra > 60 ? '#fef2f2' : 'transparent',
+              background: v.dias_sem_compra > 60 ? (dark ? 'rgba(220,38,38,0.08)' : '#fef2f2') : 'transparent',
             }}>
               <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>{i + 1}º</span>
               <div>
@@ -714,7 +716,7 @@ export default function DirecaoComercial() {
             <button onClick={perguntarAgente} disabled={agenteLoading || !perguntaAgente.trim()}
               style={{
                 padding: '12px 20px', border: 'none', borderRadius: 10,
-                background: agenteLoading || !perguntaAgente.trim() ? '#ccc' : 'var(--vinho)',
+                background: agenteLoading || !perguntaAgente.trim() ? (dark ? '#333' : '#ccc') : 'var(--vinho)',
                 color: 'white', fontSize: 13, fontWeight: 700, cursor: agenteLoading ? 'not-allowed' : 'pointer',
                 fontFamily: 'Montserrat', display: 'flex', alignItems: 'center', gap: 6,
               }}>

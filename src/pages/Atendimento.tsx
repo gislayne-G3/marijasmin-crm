@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
+import { useDark } from '../hooks/useDark'
 import {
   MessageCircle, Search, Send, Bot, User as UserIcon,
   Phone, ArrowRightLeft, AlertTriangle, CheckCircle,
@@ -93,6 +94,7 @@ function corAvatar(nome: string) {
 
 /* ─── COMPONENT ─── */
 export default function Atendimento() {
+  const dark = useDark()
   // State
   const [conversas, setConversas] = useState<Conversa[]>([])
   const [mensagens, setMensagens] = useState<Mensagem[]>([])
@@ -529,8 +531,8 @@ export default function Atendimento() {
                 </button>
                 <button style={{
                   display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px',
-                  border: '1px solid #fde047', borderRadius: 8, background: '#fef9c3',
-                  fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'Montserrat', color: '#92400e',
+                  border: dark ? '1px solid rgba(253,224,71,0.3)' : '1px solid #fde047', borderRadius: 8, background: dark ? 'rgba(253,224,71,0.1)' : '#fef9c3',
+                  fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'Montserrat', color: dark ? '#fde047' : '#92400e',
                 }}>
                   <AlertTriangle size={12} /> Urgente
                 </button>
@@ -547,19 +549,19 @@ export default function Atendimento() {
             {/* Banner Mari */}
             {conversaAtual?.atendente === 'mari' && (
               <div style={{
-                padding: '8px 20px', background: '#fef9c3', borderBottom: '1px solid #fde047',
+                padding: '8px 20px', background: dark ? 'rgba(253,224,71,0.1)' : '#fef9c3', borderBottom: dark ? '1px solid rgba(253,224,71,0.3)' : '1px solid #fde047',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Bot size={14} color="#92400e" />
-                  <span style={{ fontSize: 12, color: '#92400e', fontWeight: 600 }}>
+                  <Bot size={14} color={dark ? '#fde047' : '#92400e'} />
+                  <span style={{ fontSize: 12, color: dark ? '#fde047' : '#92400e', fontWeight: 600 }}>
                     Mari está atendendo — clique em "Assumir" para responder você
                   </span>
                 </div>
                 <button style={{
-                  padding: '4px 12px', borderRadius: 6, border: '1px solid #d97706',
-                  background: 'white', fontSize: 11, fontWeight: 700, cursor: 'pointer',
-                  fontFamily: 'Montserrat', color: '#92400e',
+                  padding: '4px 12px', borderRadius: 6, border: dark ? '1px solid rgba(217,119,6,0.4)' : '1px solid #d97706',
+                  background: 'var(--surface)', fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                  fontFamily: 'Montserrat', color: dark ? '#fde047' : '#92400e',
                 }}>
                   Assumir conversa
                 </button>
@@ -594,7 +596,7 @@ export default function Atendimento() {
                       }}>
                         <div style={{
                           maxWidth: '65%', padding: '10px 14px', borderRadius: 12,
-                          background: isMari ? '#F0EDF5' : isHumano ? '#EEEDFE' : 'var(--surface)',
+                          background: isMari ? (dark ? 'rgba(124,58,237,0.15)' : '#F0EDF5') : isHumano ? (dark ? 'rgba(99,102,241,0.15)' : '#EEEDFE') : 'var(--surface)',
                           border: !isSaida ? '1px solid var(--border)' : 'none',
                           boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
                         }}>
@@ -744,7 +746,7 @@ export default function Atendimento() {
                       <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)', margin: 0 }}>{cliente.nome}</p>
                       <span style={{
                         fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 100, marginTop: 4, display: 'inline-block',
-                        background: cliente.status === 'ativo' ? '#dcfce7' : cliente.status === 'esfriando' ? '#fef9c3' : '#fee2e2',
+                        background: cliente.status === 'ativo' ? (dark ? 'rgba(22,163,106,0.15)' : '#dcfce7') : cliente.status === 'esfriando' ? (dark ? 'rgba(217,119,6,0.15)' : '#fef9c3') : (dark ? 'rgba(220,38,38,0.15)' : '#fee2e2'),
                         color: cliente.status === 'ativo' ? '#16a34a' : cliente.status === 'esfriando' ? '#d97706' : '#dc2626',
                       }}>
                         {cliente.status?.toUpperCase() || 'N/A'}
@@ -802,7 +804,7 @@ export default function Atendimento() {
                             </p>
                             <span style={{
                               fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 100,
-                              background: pedidos[0].status === 'Aprovado' ? '#dcfce7' : '#fef9c3',
+                              background: pedidos[0].status === 'Aprovado' ? (dark ? 'rgba(22,163,106,0.15)' : '#dcfce7') : (dark ? 'rgba(217,119,6,0.15)' : '#fef9c3'),
                               color: pedidos[0].status === 'Aprovado' ? '#16a34a' : '#d97706',
                             }}>
                               {pedidos[0].status}

@@ -33,10 +33,108 @@ body {
 
 #root { width: 100%; min-height: 100vh; }
 
+:root {
+  --neon: #8e2753;
+  --neon-glow: none;
+  --neon-glow-strong: none;
+  --sidebar-bg: #0e2955;
+  --input-bg: #ffffff;
+  --input-border: #e4dfe4;
+}
+
+/* ── Dark Mode Futurista ── */
+body.dark {
+  --vinho: #C44D8A;
+  --vinho-hover: #d45a99;
+  --vinho-light: rgba(196,77,138,0.15);
+  --azul: #F0F0FF;
+  --azul-light: #1A3A7A;
+  --bg: #0A0A0F;
+  --surface: #12121A;
+  --surface-2: #1A1A25;
+  --border: rgba(142,39,83,0.3);
+  --text: #F0F0FF;
+  --text-muted: #6B6B8A;
+  --text-light: #4A4A65;
+  --success: #22d46a;
+  --warning: #f5a623;
+  --danger: #f04848;
+  --neon: #C44D8A;
+  --neon-glow: 0 0 12px rgba(196,77,138,0.5);
+  --neon-glow-strong: 0 0 20px rgba(196,77,138,0.6);
+  --sidebar-bg: #0D0D15;
+  --input-bg: #0D0D15;
+  --input-border: #2A2A3A;
+}
+
+/* Dark mode global overrides */
+body.dark input,
+body.dark textarea,
+body.dark select {
+  background: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--text) !important;
+  transition: all 0.3s;
+}
+body.dark input:focus,
+body.dark textarea:focus,
+body.dark select:focus {
+  border-color: var(--neon) !important;
+  box-shadow: var(--neon-glow) !important;
+  outline: none;
+}
+
+body.dark .tabela-medidas th { background: var(--surface-2); color: var(--neon); }
+body.dark .tabela-medidas td { border-bottom-color: var(--border); color: var(--text); }
+body.dark .tabela-medidas tr:nth-child(even) td { background: rgba(196,77,138,0.05); }
+body.dark .tabela-medidas tr:first-child td { color: var(--neon); }
+body.dark .foto-redonda { border-color: var(--border); }
+body.dark .secao-foto h3 { color: var(--neon); }
+
+/* Neon keyframes */
+@keyframes neonPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(196,77,138,0.3); }
+  50% { box-shadow: 0 0 16px rgba(196,77,138,0.6); }
+}
+@keyframes mariPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(34,212,106,0.3); }
+  50% { box-shadow: 0 0 16px rgba(34,212,106,0.5); }
+}
+
+body.dark * { transition: background 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s; }
+
+/* Dark mode gradient card overrides */
+body.dark [style*="linear-gradient(135deg, #0e2955"] {
+  background: linear-gradient(135deg, #12121A, #1A1A30) !important;
+  border: 1px solid rgba(26,58,122,0.4) !important;
+}
+body.dark [style*="linear-gradient(135deg, #8e2753"] {
+  background: linear-gradient(135deg, #1A0A15, #2A1225) !important;
+  border: 1px solid rgba(196,77,138,0.4) !important;
+  box-shadow: 0 0 20px rgba(196,77,138,0.15) !important;
+}
+
+/* Utility classes for dark mode neon effects */
+body.dark .neon-number {
+  color: var(--neon) !important;
+  text-shadow: 0 0 10px rgba(196,77,138,0.5);
+}
+body.dark .mari-pulse {
+  animation: mariPulse 2s ease-in-out infinite;
+}
+body.dark .rank-gold {
+  color: #FFD700 !important;
+  text-shadow: 0 0 10px rgba(255,215,0,0.5);
+}
+
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
+
+body.dark::-webkit-scrollbar-track { background: #12121A; }
+body.dark::-webkit-scrollbar-thumb { background: #8E2753; border-radius: 3px; }
+body.dark::-webkit-scrollbar-thumb:hover { background: var(--neon); }
 
 input, textarea, select, button {
   font-family: 'Montserrat', sans-serif;

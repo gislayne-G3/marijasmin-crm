@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { useDark } from '../hooks/useDark'
 import {
   Settings, Users, MessageSquare, Target, Link2, Plus,
   Trash2, Edit3, Check, X, RefreshCw, Wifi, WifiOff,
@@ -53,6 +54,7 @@ function fmtData(d: string) {
 
 /* ─── COMPONENT ─── */
 export default function Configuracoes() {
+  const dark = useDark()
   const [abaAtiva, setAbaAtiva] = useState<'usuarios' | 'templates' | 'metas' | 'integracoes'>('usuarios')
   const [loading, setLoading] = useState(true)
 
@@ -282,9 +284,9 @@ export default function Configuracoes() {
 
   const roleLabel: Record<string, string> = { admin: 'Administrador', vendedora: 'Vendedora', direcao: 'Direção Comercial' }
   const roleColor: Record<string, { bg: string; color: string }> = {
-    admin: { bg: '#dbeafe', color: '#2563eb' },
-    vendedora: { bg: '#fce7f3', color: '#be185d' },
-    direcao: { bg: '#fef9c3', color: '#92400e' },
+    admin: { bg: dark ? 'rgba(37,99,235,0.15)' : '#dbeafe', color: '#2563eb' },
+    vendedora: { bg: dark ? 'rgba(190,24,93,0.15)' : '#fce7f3', color: '#be185d' },
+    direcao: { bg: dark ? 'rgba(146,64,14,0.15)' : '#fef9c3', color: '#92400e' },
   }
 
   // ─── RENDER ───
@@ -356,7 +358,7 @@ export default function Configuracoes() {
                 <div>
                   <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Tipo de acesso</label>
                   <select value={novoRole} onChange={e => setNovoRole(e.target.value as any)}
-                    style={{ width: '100%', padding: '9px 10px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12, boxSizing: 'border-box', background: 'white' }}>
+                    style={{ width: '100%', padding: '9px 10px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12, boxSizing: 'border-box', background: 'var(--surface)' }}>
                     <option value="admin">Administrador</option>
                     <option value="vendedora">Vendedora</option>
                     <option value="direcao">Direção Comercial</option>
@@ -368,7 +370,7 @@ export default function Configuracoes() {
                 <div style={{ marginBottom: 12 }}>
                   <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Vincular à vendedora</label>
                   <select value={novoVendedoraId || ''} onChange={e => setNovoVendedoraId(Number(e.target.value) || null)}
-                    style={{ width: '100%', maxWidth: 300, padding: '9px 10px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12, boxSizing: 'border-box', background: 'white' }}>
+                    style={{ width: '100%', maxWidth: 300, padding: '9px 10px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12, boxSizing: 'border-box', background: 'var(--surface)' }}>
                     <option value="">Selecione uma vendedora...</option>
                     {vendedoras.map(v => (
                       <option key={v.id} value={v.id}>{v.nome}</option>
@@ -383,7 +385,7 @@ export default function Configuracoes() {
                   <Check size={12} /> {criandoUser ? 'Criando...' : 'Criar Usuário'}
                 </button>
                 <button onClick={() => setShowFormUser(false)}
-                  style={{ padding: '8px 16px', border: '1px solid var(--border)', borderRadius: 8, background: 'white', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Montserrat', color: 'var(--text)' }}>
+                  style={{ padding: '8px 16px', border: '1px solid var(--border)', borderRadius: 8, background: 'var(--surface)', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Montserrat', color: 'var(--text)' }}>
                   Cancelar
                 </button>
               </div>
@@ -447,7 +449,7 @@ export default function Configuracoes() {
                 <div>
                   <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Categoria</label>
                   <select value={tplCategoria} onChange={e => setTplCategoria(e.target.value)}
-                    style={{ width: '100%', padding: '9px 10px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12, boxSizing: 'border-box', background: 'white' }}>
+                    style={{ width: '100%', padding: '9px 10px', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12, boxSizing: 'border-box', background: 'var(--surface)' }}>
                     <option value="">Selecione...</option>
                     <option value="geral">Geral</option>
                     <option value="vendas">Vendas</option>
@@ -471,7 +473,7 @@ export default function Configuracoes() {
                   <Save size={12} /> Salvar
                 </button>
                 <button onClick={() => { setShowFormTemplate(false); setEditTemplateId(null) }}
-                  style={{ padding: '8px 16px', border: '1px solid var(--border)', borderRadius: 8, background: 'white', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Montserrat', color: 'var(--text)' }}>
+                  style={{ padding: '8px 16px', border: '1px solid var(--border)', borderRadius: 8, background: 'var(--surface)', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'Montserrat', color: 'var(--text)' }}>
                   Cancelar
                 </button>
               </div>
@@ -577,7 +579,7 @@ export default function Configuracoes() {
                     <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{fmtMoeda(Number(m.meta_minima))}</span>
                     <span style={{
                       fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 100, textAlign: 'center',
-                      background: m.status === 'ativa' ? '#dcfce7' : m.status === 'aprovada' ? '#dbeafe' : '#f3f4f6',
+                      background: m.status === 'ativa' ? (dark ? 'rgba(22,163,74,0.15)' : '#dcfce7') : m.status === 'aprovada' ? (dark ? 'rgba(37,99,235,0.15)' : '#dbeafe') : (dark ? 'rgba(107,114,128,0.15)' : '#f3f4f6'),
                       color: m.status === 'ativa' ? '#16a34a' : m.status === 'aprovada' ? '#2563eb' : '#6b7280',
                     }}>
                       {m.status}

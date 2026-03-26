@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LayoutGrid, Package, Users, Link2, LogOut, ShoppingBag, RefreshCw, ShoppingCart, MessageCircle, UserCheck, Target, Bot, Settings } from 'lucide-react'
 import { logout } from '../lib/auth'
+import ThemeToggle from './ThemeToggle'
 
 const nav = [
   { to: '/',              icon: LayoutGrid,  label: 'Dashboard' },
@@ -25,7 +26,7 @@ export default function Sidebar() {
   }
 
   return (
-    <aside style={{ background: 'var(--azul)', width: 220, minHeight: '100vh', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+    <aside style={{ background: 'var(--sidebar-bg)', width: 220, minHeight: '100vh', display: 'flex', flexDirection: 'column', flexShrink: 0, transition: 'background 0.3s' }}>
       {/* Logo */}
       <div style={{ padding: '28px 24px 20px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -67,8 +68,9 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Logout */}
-      <div style={{ padding: '16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+      {/* Theme + Logout */}
+      <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <ThemeToggle />
         <button
           onClick={handleLogout}
           style={{

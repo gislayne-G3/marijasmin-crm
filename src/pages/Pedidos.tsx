@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { Search, Filter, ShoppingBag, TrendingUp, Calendar, ChevronRight, X } from 'lucide-react'
+import { useDark, useStatusCores } from '../hooks/useDark'
 
 interface Pedido {
   id: number
@@ -27,14 +28,6 @@ interface PedidoItem {
   sku: string | null
 }
 
-const STATUS_COR: Record<string, { color: string; bg: string }> = {
-  aprovado:   { color: '#16a34a', bg: '#dcfce7' },
-  faturado:   { color: '#0e7490', bg: '#cffafe' },
-  enviado:    { color: '#7c3aed', bg: '#ede9fe' },
-  entregue:   { color: '#15803d', bg: '#bbf7d0' },
-  cancelado:  { color: '#dc2626', bg: '#fee2e2' },
-  pendente:   { color: '#d97706', bg: '#fef9c3' },
-}
 
 function fmt(val: number) {
   return val?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) ?? 'R$ 0'
@@ -45,6 +38,8 @@ function fmtDate(d: string | null) {
 }
 
 export default function Pedidos() {
+  const dark = useDark()
+  const STATUS_COR = useStatusCores()
   const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -229,7 +224,7 @@ export default function Pedidos() {
           </div>
         ) : (
           paginados.map((p, i) => {
-            const cfg = STATUS_COR[p.status] || { color: '#6b7280', bg: '#f3f4f6' }
+            const cfg = STATUS_COR[p.status] || { color: dark ? '#6B6B8A' : '#6b7280', bg: dark ? 'rgba(107,107,138,0.12)' : '#f3f4f6' }
             return (
               <div
                 key={p.id}

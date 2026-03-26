@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { useDark } from '../hooks/useDark'
 import {
   Bot, MessageSquare, Users, Repeat, ShoppingCart, DollarSign,
   TrendingUp, Activity, Clock, ArrowRight, Zap,
@@ -54,6 +55,7 @@ function fmtHora(d: string) {
 
 /* ─── COMPONENT ─── */
 export default function MariPerformance() {
+  const dark = useDark()
   const [loading, setLoading] = useState(true)
   const [perfHoje, setPerfHoje] = useState<PerfDia | null>(null)
   const [perfMes, setPerfMes] = useState<PerfDia[]>([])
@@ -348,7 +350,7 @@ export default function MariPerformance() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 0', background: '#fef2f2', borderRadius: 10, padding: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '14px 0', background: dark ? 'rgba(220,38,38,0.10)' : '#fef2f2', borderRadius: 10, padding: '14px' }}>
                 <span style={{ fontSize: 13, fontWeight: 700, color: '#dc2626' }}>CUSTO TOTAL DO MÊS</span>
                 <span style={{ fontSize: 18, fontWeight: 800, color: '#dc2626' }}>{fmtMoeda(statsMes.custo_total)}</span>
               </div>
@@ -374,7 +376,7 @@ export default function MariPerformance() {
               </div>
 
               <div style={{
-                background: roi > 100 ? '#dcfce7' : '#fef9c3', borderRadius: 10, padding: '16px', textAlign: 'center',
+                background: roi > 100 ? (dark ? 'rgba(22,163,74,0.12)' : '#dcfce7') : (dark ? 'rgba(217,119,6,0.12)' : '#fef9c3'), borderRadius: 10, padding: '16px', textAlign: 'center',
               }}>
                 <p style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', margin: '0 0 4px', textTransform: 'uppercase' }}>ROI</p>
                 <p style={{ fontSize: 32, fontWeight: 800, color: roi > 100 ? '#16a34a' : '#d97706', margin: 0 }}>

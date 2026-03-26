@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { useDark } from '../hooks/useDark'
 import { Search, Users, TrendingDown, Clock, XCircle, ChevronRight, X, ShoppingBag, Phone, Mail, Calendar, Tag, Filter } from 'lucide-react'
 
 interface Cliente {
@@ -28,11 +29,13 @@ interface Pedido {
   vendedor_nome: string | null
 }
 
-const STATUS_CONFIG = {
-  ativo:     { label: 'Ativo',      color: '#16a34a', bg: '#dcfce7', icon: '🟢' },
-  esfriando: { label: 'Esfriando',  color: '#d97706', bg: '#fef9c3', icon: '🟡' },
-  inativo:   { label: 'Inativo',    color: '#6b7280', bg: '#f3f4f6', icon: '⚪' },
-  perdido:   { label: 'Perdido',    color: '#dc2626', bg: '#fee2e2', icon: '🔴' },
+function getStatusConfig(dark: boolean) {
+  return {
+    ativo:     { label: 'Ativo',      color: dark ? '#22d46a' : '#16a34a', bg: dark ? 'rgba(34,212,106,0.12)' : '#dcfce7', icon: '🟢' },
+    esfriando: { label: 'Esfriando',  color: dark ? '#f5a623' : '#d97706', bg: dark ? 'rgba(245,166,35,0.12)' : '#fef9c3', icon: '🟡' },
+    inativo:   { label: 'Inativo',    color: dark ? '#6B6B8A' : '#6b7280', bg: dark ? 'rgba(107,107,138,0.12)' : '#f3f4f6', icon: '⚪' },
+    perdido:   { label: 'Perdido',    color: dark ? '#f04848' : '#dc2626', bg: dark ? 'rgba(240,72,72,0.12)' : '#fee2e2', icon: '🔴' },
+  }
 }
 
 function fmt(val: number) {
@@ -44,6 +47,8 @@ function fmtDate(d: string | null) {
 }
 
 export default function Clientes() {
+  const dark = useDark()
+  const STATUS_CONFIG = getStatusConfig(dark)
   const [clientes, setClientes] = useState<Cliente[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -112,10 +117,10 @@ export default function Clientes() {
   }
 
   const statCards = [
-    { key: 'ativo',     label: 'Ativos',      valor: stats.ativo,     icon: Users,         color: '#16a34a' },
-    { key: 'esfriando', label: 'Esfriando',   valor: stats.esfriando, icon: Clock,         color: '#d97706' },
-    { key: 'inativo',   label: 'Inativos',    valor: stats.inativo,   icon: TrendingDown,  color: '#6b7280' },
-    { key: 'perdido',   label: 'Perdidos',    valor: stats.perdido,   icon: XCircle,       color: '#dc2626' },
+    { key: 'ativo',     label: 'Ativos',      valor: stats.ativo,     icon: Users,         color: dark ? '#22d46a' : '#16a34a' },
+    { key: 'esfriando', label: 'Esfriando',   valor: stats.esfriando, icon: Clock,         color: dark ? '#f5a623' : '#d97706' },
+    { key: 'inativo',   label: 'Inativos',    valor: stats.inativo,   icon: TrendingDown,  color: dark ? '#6B6B8A' : '#6b7280' },
+    { key: 'perdido',   label: 'Perdidos',    valor: stats.perdido,   icon: XCircle,       color: dark ? '#f04848' : '#dc2626' },
   ]
 
   return (
@@ -242,7 +247,7 @@ export default function Clientes() {
           </div>
         ) : (
           paginados.map((c, i) => {
-            const cfg = STATUS_CONFIG[c.status as keyof typeof STATUS_CONFIG] || { label: c.status, color: '#6b7280', bg: '#f3f4f6' }
+            const cfg = STATUS_CONFIG[c.status as keyof typeof STATUS_CONFIG] || { label: c.status, color: dark ? '#6B6B8A' : '#6b7280', bg: dark ? 'rgba(107,107,138,0.12)' : '#f3f4f6' }
             return (
               <div
                 key={c.id}
@@ -402,7 +407,7 @@ export default function Clientes() {
                 </h2>
                 <div style={{ display: 'flex', gap: 8, marginTop: 8, alignItems: 'center' }}>
                   {(() => {
-                    const cfg = STATUS_CONFIG[selecionado.status as keyof typeof STATUS_CONFIG] || { label: selecionado.status, color: '#6b7280', bg: '#f3f4f6' }
+                    const cfg = STATUS_CONFIG[selecionado.status as keyof typeof STATUS_CONFIG] || { label: selecionado.status, color: dark ? '#6B6B8A' : '#6b7280', bg: dark ? 'rgba(107,107,138,0.12)' : '#f3f4f6' }
                     return (
                       <span style={{ fontSize: 11, fontWeight: 700, color: cfg.color, background: cfg.bg, padding: '3px 10px', borderRadius: 100 }}>
                         {cfg.label}
@@ -518,8 +523,8 @@ export default function Clientes() {
                         </div>
                         <span style={{
                           fontSize: 11, padding: '3px 10px', borderRadius: 100, fontWeight: 600,
-                          background: p.status === 'aprovado' ? '#dcfce7' : p.status === 'cancelado' ? '#fee2e2' : '#fef9c3',
-                          color: p.status === 'aprovado' ? '#16a34a' : p.status === 'cancelado' ? '#dc2626' : '#d97706',
+                          background: p.status === 'aprovado' ? (dark ? 'rgba(34,212,106,0.12)' : '#dcfce7') : p.status === 'cancelado' ? (dark ? 'rgba(240,72,72,0.12)' : '#fee2e2') : (dark ? 'rgba(245,166,35,0.12)' : '#fef9c3'),
+                          color: p.status === 'aprovado' ? (dark ? '#22d46a' : '#16a34a') : p.status === 'cancelado' ? (dark ? '#f04848' : '#dc2626') : (dark ? '#f5a623' : '#d97706'),
                         }}>
                           {p.status || 'pendente'}
                         </span>

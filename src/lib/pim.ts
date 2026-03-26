@@ -36,6 +36,7 @@ export interface ProdutoVariacao {
   tamanho: string
   estoque: number
   sku: string | null
+  nuvemshop_variant_id?: string | null
 }
 
 export interface ProdutoMedida {
@@ -66,12 +67,30 @@ export const CAT_ICON: Record<string, string> = {
   vestidos: '👗', conjuntos: '🩱', macacoes: '🦱', blusas: '👚', calcas: '👖',
 }
 
-export async function buscarProdutos(busca = '', categoria = '') {
+export interface ProdutoComCount extends Produto {
+  num_variacoes: number
+}
+
+export async function buscarProdutos(busca = '', categoria = ''): Promise<ProdutoComCount[]> {
   let q = supabase.from('produtos').select('*').eq('ativo', true).order('nome')
   if (busca.trim()) q = q.or(`nome.ilike.%${busca}%,sku.ilike.%${busca}%`)
   if (categoria) q = q.eq('categoria', categoria)
-  const { data } = await q.limit(300)
-  return (data || []) as Produto[]
+  const { data: prods } = await q.limit(300)
+  if (!prods?.length) return []
+
+  // Busca contagem de variações por produto
+  const ids = prods.map(p => p.id)
+  const { data: varCounts } = await supabase
+    .from('produtos_variacoes')
+    .select('produto_id')
+    .in('produto_id', ids)
+
+  const countMap: Record<number, number> = {}
+  for (const v of varCounts || []) {
+    countMap[v.produto_id] = (countMap[v.produto_id] || 0) + 1
+  }
+
+  return prods.map(p => ({ ...p, num_variacoes: countMap[p.id] || 0 })) as ProdutoComCount[]
 }
 
 export async function buscarProduto(id: number) {

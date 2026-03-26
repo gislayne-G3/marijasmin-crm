@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { buscarProdutos, CAT_ICON, type Produto } from '../../lib/pim'
+import { buscarProdutos, CAT_ICON, type ProdutoComCount } from '../../lib/pim'
 import { Search, ChevronRight, CheckCircle2, AlertCircle, ImageOff } from 'lucide-react'
 
 const CATS = ['', 'vestidos', 'conjuntos', 'macacoes', 'blusas', 'calcas']
 const CAT_LABEL: Record<string, string> = { '': 'Todos', vestidos: 'Vestidos', conjuntos: 'Conjuntos', macacoes: 'Macacões', blusas: 'Blusas', calcas: 'Calças' }
 
 export default function PimLista() {
-  const [produtos, setProdutos] = useState<Produto[]>([])
+  const [produtos, setProdutos] = useState<ProdutoComCount[]>([])
   const [busca, setBusca] = useState('')
   const [cat, setCat] = useState('')
   const [loading, setLoading] = useState(true)
@@ -113,10 +113,15 @@ export default function PimLista() {
                 </div>
               </div>
 
-              {/* Preços + Estoque */}
+              {/* Variações + Preço + Estoque */}
               <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                {p.num_variacoes > 0 && (
+                  <span style={{ fontSize: 10, background: '#e8f0fe', color: '#0e2955', padding: '2px 8px', borderRadius: 100, fontWeight: 700, display: 'inline-block', marginBottom: 4 }}>
+                    {p.num_variacoes} VARIAÇÕES
+                  </span>
+                )}
                 <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--azul)', margin: 0 }}>
-                  R$ {Number(p.preco_atacado || 0).toFixed(2)}
+                  R$ {Number(p.preco_varejo || 0).toFixed(2)}
                 </p>
                 <p style={{ fontSize: 11, color: p.estoque <= 3 ? 'var(--danger)' : 'var(--text-light)', margin: '2px 0 0', fontWeight: p.estoque <= 3 ? 600 : 400 }}>
                   Estoque: {p.estoque}

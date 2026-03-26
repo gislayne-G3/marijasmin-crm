@@ -139,11 +139,11 @@ export default function PimEditor() {
     }
   }
 
-  // Salvar tudo
+  // Salvar tudo — Supabase + Nuvemshop
   async function salvar() {
     if (!produto) return
     setSalvando(true)
-    setStatus('Salvando...')
+    setStatus('Salvando no Supabase...')
     try {
       const campos = getCampos()
       const htmlFinal = gerarHtmlDescricao(produto, produto.descricao || '', cores, medidas, campos)
@@ -153,8 +153,35 @@ export default function PimEditor() {
         salvarVariacoes(prodId, variacoes),
         salvarMedidas(prodId, medidas),
       ])
-      setStatus('Salvo com sucesso!')
-      setTimeout(() => setStatus(null), 2500)
+
+      // Sincronizar com Nuvemshop se tiver nuvemshop_id
+      if (produto.nuvemshop_id) {
+        setStatus('Sincronizando com Nuvemshop...')
+        const variacoesComId = variacoes.filter(v => v.nuvemshop_variant_id)
+        const res = await fetch('/api/pim-sync-nuvemshop', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nuvemshop_id: produto.nuvemshop_id,
+            descricao: htmlFinal,
+            preco_varejo: produto.preco_varejo,
+            preco_atacado: produto.preco_atacado,
+            variacoes: variacoesComId.map(v => ({
+              nuvemshop_variant_id: v.nuvemshop_variant_id,
+              estoque: v.estoque,
+            })),
+          }),
+        })
+        const data = await res.json()
+        if (data.erros?.length) {
+          setStatus(`Salvo! Nuvemshop: ${data.erros.length} erro(s)`)
+        } else {
+          setStatus(`✅ Salvo e sincronizado com Nuvemshop!`)
+        }
+      } else {
+        setStatus('✅ Salvo com sucesso!')
+      }
+      setTimeout(() => setStatus(null), 3000)
     } catch {
       setStatus('Erro ao salvar')
     } finally {
@@ -320,10 +347,12 @@ export default function PimEditor() {
       <Section title="Descrição do Produto">
         <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
           <button onClick={gerarDescricao} disabled={gerando} style={{ ...btnPrimary, flex: 'none' }}>
-            <Sparkles size={14} /> {gerando ? 'Gerando...' : 'Gerar com IA'}
+            <Sparkles size={14} /> {gerando ? 'Gerando...' : produto.descricao ? '✨ Melhorar SEO com IA' : 'Gerar com IA'}
           </button>
           <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: 'auto 0' }}>
-            A IA cria a descrição no formato correto com base no produto. Você pode editar depois.
+            {produto.descricao
+              ? 'A IA melhora a descrição existente com foco em SEO e conversão.'
+              : 'A IA cria a descrição no formato correto com base no produto.'}
           </p>
         </div>
 

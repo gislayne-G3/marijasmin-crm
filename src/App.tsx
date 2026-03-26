@@ -15,6 +15,7 @@ import Atendimento from './pages/Atendimento'
 import PainelVendedora from './pages/PainelVendedora'
 import DirecaoComercial from './pages/DirecaoComercial'
 import MariPerformance from './pages/MariPerformance'
+import Configuracoes from './pages/Configuracoes'
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -66,6 +67,7 @@ export default function App() {
         <Route path="/vendedora" element={<Protected user={user}><Layout><PainelVendedora /></Layout></Protected>} />
         <Route path="/direcao" element={<Protected user={user}><Layout><DirecaoComercial /></Layout></Protected>} />
         <Route path="/mari-performance" element={<Protected user={user}><Layout><MariPerformance /></Layout></Protected>} />
+        <Route path="/configuracoes" element={<Protected user={user}><Layout><Configuracoes /></Layout></Protected>} />
         <Route path="/linktree" element={<Protected user={user}><Layout><Linktree /></Layout></Protected>} />
         <Route path="/sincronizacao" element={<Protected user={user}><Layout><Sincronizacao /></Layout></Protected>} />
         <Route path="*" element={<Navigate to="/" replace />} />

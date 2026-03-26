@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutGrid, Package, Users, Link2, LogOut, ShoppingBag, RefreshCw, ShoppingCart, MessageCircle, UserCheck, Target, Bot } from 'lucide-react'
+import { LayoutGrid, Package, Users, Link2, LogOut, ShoppingBag, RefreshCw, ShoppingCart, MessageCircle, UserCheck, Target, Bot, Settings } from 'lucide-react'
 import { logout } from '../lib/auth'
 
 const nav = [
@@ -12,6 +12,7 @@ const nav = [
   { to: '/direcao',    icon: Target,        label: 'Direção' },
   { to: '/mari-performance', icon: Bot,    label: 'Mari SDR' },
   { to: '/sincronizacao', icon: RefreshCw,   label: 'Sincronização' },
+  { to: '/configuracoes', icon: Settings,   label: 'Configurações' },
   { to: '/linktree',     icon: Link2,       label: 'Linktree' },
 ]
 

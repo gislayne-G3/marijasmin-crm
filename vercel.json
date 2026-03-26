@@ -2,5 +2,12 @@
   "rewrites": [
     { "source": "/nuvemshop/callback", "destination": "/api/nuvemshop-callback" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
-  ]
+  ],
+  "functions": {
+    "api/pim-sync-fotos-nuvemshop.ts": { "maxDuration": 120 },
+    "api/pim-analisar-fotos.ts":       { "maxDuration": 120 },
+    "api/nuvemshop-import-novos.ts":   { "maxDuration": 120 },
+    "api/nuvemshop-sync-estoque.ts":   { "maxDuration": 120 },
+    "api/tiny-sync-pedidos.ts":        { "maxDuration": 120 }
+  }
 }

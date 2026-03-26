@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { RefreshCw, Package, ShoppingCart, CheckCircle2, AlertCircle, Clock, Store } from 'lucide-react'
+import { RefreshCw, Package, ShoppingCart, CheckCircle2, AlertCircle, Clock, Store, Download } from 'lucide-react'
 
 interface SyncResult {
   ok: boolean
@@ -22,10 +22,23 @@ interface SyncLog {
 export default function Sincronizacao() {
   const [loadingEstoque, setLoadingEstoque] = useState(false)
   const [loadingEstoqueNS, setLoadingEstoqueNS] = useState(false)
+  const [loadingImportNovos, setLoadingImportNovos] = useState(false)
   const [loadingPedidos, setLoadingPedidos] = useState(false)
   const [paginaInicio, setPaginaInicio] = useState(1)
   const [paginaFim, setPaginaFim] = useState(10)
   const [logs, setLogs] = useState<SyncLog[]>([])
+
+  async function importarNovos() {
+    setLoadingImportNovos(true)
+    try {
+      const res = await fetch('/api/nuvemshop-import-novos', { method: 'POST' })
+      const result: SyncResult = await res.json()
+      setLogs(prev => [{ tipo: 'Novos Produtos', result, timestamp: new Date().toLocaleTimeString('pt-BR') }, ...prev])
+    } catch (e) {
+      setLogs(prev => [{ tipo: 'Novos Produtos', result: { ok: false, erros: 1, errosList: [String(e)] }, timestamp: new Date().toLocaleTimeString('pt-BR') }, ...prev])
+    }
+    setLoadingImportNovos(false)
+  }
 
   async function syncEstoqueNuvemshop() {
     setLoadingEstoqueNS(true)
@@ -77,6 +90,39 @@ export default function Sincronizacao() {
       </div>
 
       <div style={{ display: 'grid', gap: 16 }}>
+
+        {/* Card Importar Novos Produtos */}
+        <div style={{ background: '#e8f0fe', border: '1px solid #b8d0f8', borderRadius: 14, padding: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+            <div style={{ width: 42, height: 42, borderRadius: 10, background: 'var(--azul)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Download size={20} color="white" />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <h2 style={{ fontSize: 15, fontWeight: 700, color: 'var(--azul)', margin: 0 }}>Importar Novos Produtos da Nuvemshop</h2>
+              </div>
+              <p style={{ color: 'var(--text-muted)', fontSize: 12, margin: '0 0 16px', lineHeight: 1.5 }}>
+                Detecta produtos cadastrados na Nuvemshop que ainda <strong>não estão no PIM</strong> e os importa automaticamente com cores, variações e estoque.
+                Produtos já existentes não são alterados.
+              </p>
+              <button
+                onClick={importarNovos}
+                disabled={loadingImportNovos}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  padding: '10px 20px', borderRadius: 8, border: 'none',
+                  background: loadingImportNovos ? 'var(--border)' : 'var(--azul)',
+                  color: 'white', fontSize: 13, fontWeight: 600,
+                  cursor: loadingImportNovos ? 'not-allowed' : 'pointer',
+                  fontFamily: 'Montserrat',
+                }}
+              >
+                <Download size={14} style={{ animation: loadingImportNovos ? 'spin 1s linear infinite' : 'none' }} />
+                {loadingImportNovos ? 'Verificando produtos novos...' : 'Importar Novos Produtos'}
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* Card Estoque Nuvemshop — PRINCIPAL */}
         <div style={{ background: 'var(--surface)', border: '2px solid var(--vinho)', borderRadius: 14, padding: 24 }}>

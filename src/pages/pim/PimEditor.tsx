@@ -192,9 +192,10 @@ export default function PimEditor() {
 
       // Sincronizar com Nuvemshop se tiver nuvemshop_id
       if (produto.nuvemshop_id) {
-        setStatus('Sincronizando com Nuvemshop...')
+        // Passo 1: sincroniza descrição + preço + estoque
+        setStatus('Sincronizando descrição e preços na Nuvemshop...')
         const variacoesComId = variacoes.filter(v => v.nuvemshop_variant_id)
-        const res = await fetch('/api/pim-sync-nuvemshop', {
+        const resSync = await fetch('/api/pim-sync-nuvemshop', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -208,11 +209,23 @@ export default function PimEditor() {
             })),
           }),
         })
-        const data = await res.json()
-        if (data.erros?.length) {
-          setStatus(`Salvo! Nuvemshop: ${data.erros.length} erro(s)`)
+        const dataSync = await resSync.json()
+
+        // Passo 2: sincroniza fotos por cor (vincula imagem à variação)
+        const coresComFoto = cores.filter(c => c.foto_frente)
+        if (coresComFoto.length > 0) {
+          setStatus('Enviando fotos para a Nuvemshop (foto por cor)...')
+          await fetch('/api/pim-sync-fotos-nuvemshop', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ produto_id: prodId }),
+          })
+        }
+
+        if (dataSync.erros?.length) {
+          setStatus(`✅ Salvo! Nuvemshop: ${dataSync.erros.length} aviso(s)`)
         } else {
-          setStatus(`✅ Salvo e sincronizado com Nuvemshop!`)
+          setStatus('✅ Salvo e sincronizado — descrição, estoque e fotos por cor!')
         }
       } else {
         setStatus('✅ Salvo com sucesso!')

@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { requireAuth } from './_auth'
+import { requireAuth } from './_auth.js'
 
 const STORE_ID = process.env.NUVEMSHOP_STORE_ID || '7344725'
 const TOKEN    = process.env.NUVEMSHOP_ACCESS_TOKEN!

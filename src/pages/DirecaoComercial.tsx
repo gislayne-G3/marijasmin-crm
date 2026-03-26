@@ -248,9 +248,10 @@ export default function DirecaoComercial() {
   async function distribuirMetas() {
     setDistribuindo(true)
     try {
-      const res = await apiFetch('/api/metas-distribuir', {
+      const res = await apiFetch('/api/crm-api', {
         method: 'POST',
         body: JSON.stringify({
+          action: 'metas-distribuir',
           meta_geral: Number(novaMetaGeral),
           meta_minima: Number(novaMetaMinima),
           mes_ref: mesAtual,
@@ -273,9 +274,9 @@ export default function DirecaoComercial() {
         vendedora_id: m.vendedora_id,
         meta_mensal: m.meta_mensal,
       }))
-      await apiFetch('/api/metas-aprovar', {
+      await apiFetch('/api/crm-api', {
         method: 'POST',
-        body: JSON.stringify({ meta_mensal_id: metaPendenteId, ajustes }),
+        body: JSON.stringify({ action: 'metas-aprovar', meta_mensal_id: metaPendenteId, ajustes }),
       })
       setShowFormMeta(false)
       setMetasPendentes([])
@@ -292,9 +293,10 @@ export default function DirecaoComercial() {
     setAgenteLoading(true)
     setRespostaAgente('')
     try {
-      const res = await apiFetch('/api/agente-fiscal', {
+      const res = await apiFetch('/api/crm-api', {
         method: 'POST',
         body: JSON.stringify({
+          action: 'agente-fiscal',
           pergunta: perguntaAgente,
           mes_ref: mesAtual,
           contexto: {

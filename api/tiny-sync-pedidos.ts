@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { createClient } from '@supabase/supabase-js'
-import { requireAuth } from './_auth'
+import { requireAuth } from './_auth.js'
 
 const TINY_TOKEN = process.env.TINY_API_TOKEN!
 const supabase = createClient(

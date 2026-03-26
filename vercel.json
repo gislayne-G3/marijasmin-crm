@@ -8,6 +8,8 @@
     "api/pim-analisar-fotos.ts":       { "maxDuration": 120 },
     "api/nuvemshop-import-novos.ts":   { "maxDuration": 120 },
     "api/nuvemshop-sync-estoque.ts":   { "maxDuration": 120 },
-    "api/tiny-sync-pedidos.ts":        { "maxDuration": 120 }
+    "api/tiny-sync-pedidos.ts":        { "maxDuration": 120 },
+    "api/tiny-webhook-pedido.ts":      { "maxDuration": 60 },
+    "api/tiny-reservar-estoque.ts":    { "maxDuration": 60 }
   }
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { RefreshCw, Package, ShoppingCart, CheckCircle2, AlertCircle, Clock, Store, Download } from 'lucide-react'
+import { RefreshCw, Package, ShoppingCart, CheckCircle2, AlertCircle, Clock, Store, Download, Zap, Copy, Check } from 'lucide-react'
 
 interface SyncResult {
   ok: boolean
@@ -19,6 +19,8 @@ interface SyncLog {
   timestamp: string
 }
 
+const WEBHOOK_URL = 'https://marijasmin-crm.vercel.app/api/tiny-webhook-pedido'
+
 export default function Sincronizacao() {
   const [loadingEstoque, setLoadingEstoque] = useState(false)
   const [loadingEstoqueNS, setLoadingEstoqueNS] = useState(false)
@@ -27,6 +29,13 @@ export default function Sincronizacao() {
   const [paginaInicio, setPaginaInicio] = useState(1)
   const [paginaFim, setPaginaFim] = useState(10)
   const [logs, setLogs] = useState<SyncLog[]>([])
+  const [copiado, setCopiado] = useState(false)
+
+  function copiarUrl() {
+    navigator.clipboard.writeText(WEBHOOK_URL)
+    setCopiado(true)
+    setTimeout(() => setCopiado(false), 2000)
+  }
 
   async function importarNovos() {
     setLoadingImportNovos(true)
@@ -83,13 +92,68 @@ export default function Sincronizacao() {
   return (
     <div style={{ padding: '32px 40px', maxWidth: 780 }}>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--azul)', margin: 0 }}>Sincronização Tiny ERP</h1>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: '#810947', margin: 0 }}>Sincronização</h1>
         <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 4 }}>
-          Sincronize estoque e pedidos do Tiny com o Supabase
+          Estoque e pedidos sincronizados em tempo real entre Tiny ERP · Nuvemshop · PIM
         </p>
       </div>
 
       <div style={{ display: 'grid', gap: 16 }}>
+
+        {/* ── WEBHOOK AUTOMÁTICO — card destaque ── */}
+        <div style={{ background: 'linear-gradient(135deg, #5a0630 0%, #810947 100%)', borderRadius: 16, padding: 24, color: 'white' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Zap size={22} color="white" />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <h2 style={{ fontSize: 15, fontWeight: 700, color: 'white', margin: 0 }}>Webhook Automático — Reserva de Estoque</h2>
+                <span style={{ fontSize: 10, background: 'rgba(255,255,255,0.25)', color: 'white', padding: '2px 8px', borderRadius: 100, fontWeight: 700 }}>TEMPO REAL</span>
+              </div>
+              <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, margin: '0 0 16px', lineHeight: 1.6 }}>
+                Quando uma vendedora salva um pedido no Tiny (ou adiciona produto manualmente), o estoque é <strong style={{ color: 'white' }}>reservado automaticamente</strong> no Supabase e atualizado na Nuvemshop — sem precisar sincronizar manualmente.
+              </p>
+
+              {/* URL do webhook */}
+              <div style={{ background: 'rgba(0,0,0,0.25)', borderRadius: 10, padding: '10px 14px', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 10 }}>
+                <code style={{ fontSize: 11, color: '#fce8f2', flex: 1, wordBreak: 'break-all', fontFamily: 'monospace' }}>
+                  {WEBHOOK_URL}
+                </code>
+                <button
+                  onClick={copiarUrl}
+                  style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 6, padding: '5px 10px', color: 'white', cursor: 'pointer', fontSize: 11, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0, fontFamily: 'Montserrat' }}
+                >
+                  {copiado ? <Check size={12} /> : <Copy size={12} />}
+                  {copiado ? 'Copiado!' : 'Copiar'}
+                </button>
+              </div>
+
+              {/* Passos de configuração */}
+              <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: 10, padding: '12px 16px' }}>
+                <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.9)', margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                  ⚙️ Como configurar no Tiny ERP:
+                </p>
+                <ol style={{ margin: 0, paddingLeft: 18, fontSize: 11, color: 'rgba(255,255,255,0.8)', lineHeight: 2 }}>
+                  <li>Acesse o Tiny → <strong style={{ color: 'white' }}>Configurações → Geral → Webhooks</strong></li>
+                  <li>Clique em <strong style={{ color: 'white' }}>Adicionar Webhook</strong></li>
+                  <li>Cole a URL acima no campo <strong style={{ color: 'white' }}>URL</strong></li>
+                  <li>Marque os eventos: <strong style={{ color: 'white' }}>Pedido Incluído</strong> e <strong style={{ color: 'white' }}>Pedido Alterado</strong></li>
+                  <li>Salve — pronto! Cada pedido agora atualiza o estoque em tempo real 🎉</li>
+                </ol>
+              </div>
+
+              {/* O que acontece automaticamente */}
+              <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+                {['✅ Salva pedido no Supabase', '📦 Reserva estoque no PIM', '🛒 Atualiza Nuvemshop em tempo real'].map(txt => (
+                  <span key={txt} style={{ fontSize: 10, background: 'rgba(255,255,255,0.15)', color: 'white', padding: '4px 10px', borderRadius: 100, fontWeight: 600 }}>
+                    {txt}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Card Importar Novos Produtos */}
         <div style={{ background: '#e8f0fe', border: '1px solid #b8d0f8', borderRadius: 14, padding: 24 }}>

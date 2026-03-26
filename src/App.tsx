@@ -11,6 +11,7 @@ import Clientes from './pages/Clientes'
 import Pedidos from './pages/Pedidos'
 import Linktree from './pages/Linktree'
 import Sincronizacao from './pages/Sincronizacao'
+import Atendimento from './pages/Atendimento'
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -58,6 +59,7 @@ export default function App() {
         <Route path="/pim/:id" element={<Protected user={user}><Layout><PimEditor /></Layout></Protected>} />
         <Route path="/clientes" element={<Protected user={user}><Layout><Clientes /></Layout></Protected>} />
         <Route path="/pedidos" element={<Protected user={user}><Layout><Pedidos /></Layout></Protected>} />
+        <Route path="/atendimento" element={<Protected user={user}><Layout><Atendimento /></Layout></Protected>} />
         <Route path="/linktree" element={<Protected user={user}><Layout><Linktree /></Layout></Protected>} />
         <Route path="/sincronizacao" element={<Protected user={user}><Layout><Sincronizacao /></Layout></Protected>} />
         <Route path="*" element={<Navigate to="/" replace />} />

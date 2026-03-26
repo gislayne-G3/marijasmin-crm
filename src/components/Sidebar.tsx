@@ -1,13 +1,14 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LayoutGrid, Package, Users, Link2, LogOut, ShoppingBag, RefreshCw, ShoppingCart } from 'lucide-react'
+import { LayoutGrid, Package, Users, Link2, LogOut, ShoppingBag, RefreshCw, ShoppingCart, MessageCircle } from 'lucide-react'
 import { logout } from '../lib/auth'
 
 const nav = [
   { to: '/',              icon: LayoutGrid,  label: 'Dashboard' },
   { to: '/pim',          icon: Package,     label: 'Catálogo PIM' },
   { to: '/clientes',     icon: Users,       label: 'Clientes' },
-  { to: '/pedidos',      icon: ShoppingCart, label: 'Pedidos' },
-  { to: '/sincronizacao', icon: RefreshCw,  label: 'Sincronização' },
+  { to: '/pedidos',      icon: ShoppingCart,   label: 'Pedidos' },
+  { to: '/atendimento', icon: MessageCircle, label: 'Atendimento' },
+  { to: '/sincronizacao', icon: RefreshCw,   label: 'Sincronização' },
   { to: '/linktree',     icon: Link2,       label: 'Linktree' },
 ]
 

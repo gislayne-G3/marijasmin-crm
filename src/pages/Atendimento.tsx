@@ -149,8 +149,8 @@ export default function Atendimento() {
       const nome = clienteId && clienteMap[clienteId] ? clienteMap[clienteId] : telefone
 
       // Determinar status
-      const ultimaEntrada = msgs.find(m => m.direcao === 'entrada')
-      const ultimaSaida = msgs.find(m => m.direcao === 'saida')
+      const ultimaEntrada = msgs.find(m => m.direcao === 'entrada' || m.direcao === 'recebida')
+      const ultimaSaida = msgs.find(m => m.direcao === 'saida' || m.direcao === 'enviada')
       let status: 'resolvido' | 'aguardando' | 'urgente' = 'resolvido'
 
       if (ultimaEntrada && (!ultimaSaida || new Date(ultimaEntrada.created_at) > new Date(ultimaSaida.created_at))) {
@@ -584,9 +584,9 @@ export default function Atendimento() {
                   </div>
 
                   {grupo.msgs.map(m => {
-                    const isSaida = m.direcao === 'saida'
-                    const isMari = m.atendente === 'mari' && isSaida
-                    const isHumano = m.atendente !== 'mari' && isSaida
+                    const isSaida = m.direcao === 'saida' || m.direcao === 'enviada'
+                    const isMari = (m.atendente === 'mari' || m.atendente === 'mari-sdr') && isSaida
+                    const isHumano = m.atendente !== 'mari' && m.atendente !== 'mari-sdr' && isSaida
 
                     return (
                       <div key={m.id} style={{

@@ -392,10 +392,10 @@
       margin-right: auto !important;
     }
 
-    /* ═══ Newsletter — Estilo Principessa (fundo quente escuro) ═══ */
+    /* ═══ Newsletter — Raspberry da paleta (#810947) ═══ */
     .section-newsletter, [data-store="home-newsletter"],
     .newsletter-section, .js-newsletter {
-      background-color: #3D1A2E !important;
+      background-color: var(--raspberry) !important;
       color: #FFFFFF !important;
       text-align: center !important;
       padding: 80px 24px !important;
@@ -413,7 +413,7 @@
     }
     .section-newsletter p, [data-store="home-newsletter"] p,
     .section-newsletter .text-small {
-      color: rgba(255,255,255,0.7) !important;
+      color: rgba(255,255,255,0.75) !important;
       font-size: 14px !important;
       margin-bottom: 32px !important;
       font-family: 'Inter', sans-serif !important;
@@ -433,8 +433,8 @@
     [data-store="home-newsletter"] input[type="text"],
     .section-newsletter input,
     [data-store="home-newsletter"] input:not([type="submit"]):not([type="button"]) {
-      background: transparent !important;
-      border: 1px solid rgba(255,255,255,0.4) !important;
+      background: rgba(255,255,255,0.15) !important;
+      border: 1px solid rgba(255,255,255,0.5) !important;
       border-right: none !important;
       color: #FFFFFF !important;
       border-radius: 0 !important;
@@ -446,7 +446,7 @@
     }
     .section-newsletter input::placeholder,
     [data-store="home-newsletter"] input::placeholder {
-      color: rgba(255,255,255,0.5) !important;
+      color: rgba(255,255,255,0.6) !important;
       text-transform: uppercase !important;
       letter-spacing: 1px !important;
       font-size: 11px !important;
@@ -456,7 +456,7 @@
     .section-newsletter input[type="submit"],
     [data-store="home-newsletter"] input[type="submit"] {
       background-color: #FFFFFF !important;
-      color: #3D1A2E !important;
+      color: var(--raspberry) !important;
       border: 1px solid #FFFFFF !important;
       border-radius: 0 !important;
       padding: 16px 32px !important;
@@ -488,11 +488,90 @@
       .section-newsletter input[type="email"],
       [data-store="home-newsletter"] input[type="email"],
       .section-newsletter input:not([type="submit"]):not([type="button"]) {
-        border-right: 1px solid rgba(255,255,255,0.4) !important;
+        border-right: 1px solid rgba(255,255,255,0.5) !important;
         border-bottom: none !important;
       }
       .section-newsletter button, [data-store="home-newsletter"] button {
         width: 100% !important;
+      }
+    }
+
+    /* ═══ Editorial Section — Fotos sobrepostas + texto grande (Principessa) ═══ */
+    #mj-editorial {
+      position: relative;
+      padding: 80px 5%;
+      background: #FFFFFF;
+      overflow: hidden;
+      min-height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #mj-editorial .editorial-text {
+      position: absolute;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(60px, 10vw, 140px);
+      font-weight: 300;
+      color: rgba(200, 180, 165, 0.25);
+      text-transform: uppercase;
+      letter-spacing: 8px;
+      line-height: 0.95;
+      z-index: 1;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    #mj-editorial .editorial-text.top {
+      top: 10%;
+      left: 15%;
+    }
+    #mj-editorial .editorial-text.bottom {
+      bottom: 8%;
+      right: 0;
+    }
+    #mj-editorial .editorial-photos {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+      gap: 0;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    #mj-editorial .editorial-photo {
+      box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+    }
+    #mj-editorial .editorial-photo:first-child {
+      width: 45%;
+      transform: translateX(30px);
+      z-index: 3;
+    }
+    #mj-editorial .editorial-photo:last-child {
+      width: 50%;
+      transform: translateX(-30px) translateY(20px);
+      z-index: 2;
+    }
+    #mj-editorial .editorial-photo img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    @media (max-width: 768px) {
+      #mj-editorial {
+        padding: 48px 16px;
+        min-height: 300px;
+      }
+      #mj-editorial .editorial-text {
+        font-size: 40px;
+        letter-spacing: 3px;
+      }
+      #mj-editorial .editorial-photo:first-child {
+        width: 50%;
+        transform: translateX(15px);
+      }
+      #mj-editorial .editorial-photo:last-child {
+        width: 55%;
+        transform: translateX(-15px) translateY(10px);
       }
     }
 
@@ -1094,7 +1173,59 @@
     replaceProductLabels();
   }
 
-  // ═══ 9. Inject editorial phrase on homepage (estilo Principessa) ═══
+  // ═══ 9. Inject editorial section with overlapping photos (Principessa style) ═══
+  function injectEditorialSection() {
+    if (window.location.pathname !== '/' && window.location.pathname !== '') return;
+    if (document.getElementById('mj-editorial')) return;
+
+    // Find the two banner/textbanner images from the home
+    var bannerImages = document.querySelectorAll(
+      '.js-textbanner-image, .textbanner-image, ' +
+      '.section-banners-home img, .js-home-banners-section img, ' +
+      '[data-store="home-banners"] img'
+    );
+
+    // Only create if we have at least 2 images
+    if (bannerImages.length < 2) return;
+
+    var img1Src = bannerImages[0].src || bannerImages[0].dataset.src || bannerImages[0].dataset.srcset;
+    var img2Src = bannerImages[1].src || bannerImages[1].dataset.src || bannerImages[1].dataset.srcset;
+    if (!img1Src || !img2Src) return;
+
+    // Get first src from srcset if needed
+    if (img1Src && img1Src.includes(',')) img1Src = img1Src.split(',')[0].trim().split(' ')[0];
+    if (img2Src && img2Src.includes(',')) img2Src = img2Src.split(',')[0].trim().split(' ')[0];
+
+    var section = document.createElement('div');
+    section.id = 'mj-editorial';
+    section.innerHTML =
+      '<div class="editorial-text top">MODA</div>' +
+      '<div class="editorial-photos">' +
+        '<div class="editorial-photo"><img src="' + img1Src + '" alt="Marijasmin Editorial"></div>' +
+        '<div class="editorial-photo"><img src="' + img2Src + '" alt="Marijasmin Editorial"></div>' +
+      '</div>' +
+      '<div class="editorial-text bottom">CRISTÃ</div>';
+
+    // Insert after product section or after slider
+    var productSection = document.querySelector(
+      '.js-home-featured-products-section, [data-store="home-products-featured"]'
+    );
+    var sectionsContainer = document.querySelector('.js-home-sections-container');
+    if (productSection && productSection.parentNode) {
+      productSection.parentNode.insertBefore(section, productSection.nextSibling);
+    } else if (sectionsContainer) {
+      // Insert in the middle of sections
+      var children = sectionsContainer.children;
+      var midpoint = Math.floor(children.length / 2);
+      if (children[midpoint]) {
+        sectionsContainer.insertBefore(section, children[midpoint]);
+      } else {
+        sectionsContainer.appendChild(section);
+      }
+    }
+  }
+
+  // ═══ 9b. Inject editorial phrase on homepage ═══
   function injectEditorialPhrase() {
     if (window.location.pathname !== '/' && window.location.pathname !== '') return;
     if (document.getElementById('mj-editorial-phrase')) return;
@@ -1127,6 +1258,7 @@
     replaceProductLabels();
     fixCategoryLinks();
     injectEditorialPhrase();
+    setTimeout(injectEditorialSection, 1500); // Wait for lazy images to load
 
     // Inject atacado bar ONLY on cart/checkout pages
     if (isCartOrCheckoutPage()) {

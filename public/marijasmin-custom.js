@@ -392,95 +392,145 @@
       margin-right: auto !important;
     }
 
-    /* ═══ Newsletter — Estilo Principessa (fundo claro, elegante) ═══ */
+    /* ═══ Newsletter — Estilo Principessa (fundo quente escuro) ═══ */
     .section-newsletter, [data-store="home-newsletter"],
     .newsletter-section, .js-newsletter {
-      background-color: var(--bg-warm) !important;
-      color: var(--text-primary) !important;
+      background-color: #3D1A2E !important;
+      color: #FFFFFF !important;
       text-align: center !important;
-      padding: 72px 24px !important;
-      border-top: 1px solid var(--border-light) !important;
-      border-bottom: 1px solid var(--border-light) !important;
+      padding: 80px 24px !important;
+      border: none !important;
+      position: relative !important;
     }
     .section-newsletter h2, [data-store="home-newsletter"] h2 {
-      color: var(--text-primary) !important;
+      color: #FFFFFF !important;
       font-family: 'Cormorant Garamond', serif !important;
-      font-size: 32px !important;
+      font-size: 36px !important;
       font-weight: 400 !important;
       margin-bottom: 8px !important;
-      letter-spacing: 1px !important;
+      letter-spacing: 2px !important;
+      text-transform: uppercase !important;
     }
     .section-newsletter p, [data-store="home-newsletter"] p,
     .section-newsletter .text-small {
-      color: var(--text-muted) !important;
+      color: rgba(255,255,255,0.7) !important;
       font-size: 14px !important;
-      margin-bottom: 28px !important;
+      margin-bottom: 32px !important;
       font-family: 'Inter', sans-serif !important;
       line-height: 1.6 !important;
+      font-style: italic !important;
     }
     .section-newsletter form, [data-store="home-newsletter"] form {
       display: flex !important;
       justify-content: center !important;
       gap: 0 !important;
-      max-width: 460px !important;
+      max-width: 480px !important;
       margin: 0 auto !important;
     }
     .section-newsletter input[type="email"],
     [data-store="home-newsletter"] input[type="email"],
     .section-newsletter input[type="text"],
-    [data-store="home-newsletter"] input[type="text"] {
-      background: #FFFFFF !important;
-      border: 1px solid var(--border) !important;
+    [data-store="home-newsletter"] input[type="text"],
+    .section-newsletter input,
+    [data-store="home-newsletter"] input:not([type="submit"]):not([type="button"]) {
+      background: transparent !important;
+      border: 1px solid rgba(255,255,255,0.4) !important;
       border-right: none !important;
-      color: var(--text-primary) !important;
+      color: #FFFFFF !important;
       border-radius: 0 !important;
-      padding: 14px 18px !important;
+      padding: 16px 20px !important;
       flex: 1 !important;
-      font-size: 14px !important;
+      font-size: 13px !important;
       font-family: 'Inter', sans-serif !important;
+      letter-spacing: 0.5px !important;
     }
-    .section-newsletter input[type="email"]::placeholder,
+    .section-newsletter input::placeholder,
     [data-store="home-newsletter"] input::placeholder {
-      color: var(--text-muted) !important;
+      color: rgba(255,255,255,0.5) !important;
+      text-transform: uppercase !important;
+      letter-spacing: 1px !important;
+      font-size: 11px !important;
     }
     .section-newsletter button,
     [data-store="home-newsletter"] button,
     .section-newsletter input[type="submit"],
     [data-store="home-newsletter"] input[type="submit"] {
-      background-color: var(--raspberry) !important;
-      color: #FFFFFF !important;
-      border: 1px solid var(--raspberry) !important;
+      background-color: #FFFFFF !important;
+      color: #3D1A2E !important;
+      border: 1px solid #FFFFFF !important;
       border-radius: 0 !important;
-      padding: 14px 28px !important;
+      padding: 16px 32px !important;
       text-transform: uppercase !important;
-      letter-spacing: 1.5px !important;
+      letter-spacing: 2px !important;
       font-size: 11px !important;
-      font-weight: 600 !important;
+      font-weight: 700 !important;
       cursor: pointer !important;
-      transition: all 0.25s ease !important;
+      transition: all 0.3s ease !important;
       font-family: 'Inter', sans-serif !important;
       white-space: nowrap !important;
     }
     .section-newsletter button:hover,
     [data-store="home-newsletter"] button:hover {
-      background-color: var(--raspberry-dark) !important;
-      border-color: var(--raspberry-dark) !important;
+      background-color: transparent !important;
+      color: #FFFFFF !important;
     }
     @media (max-width: 768px) {
       .section-newsletter, [data-store="home-newsletter"] {
-        padding: 48px 16px !important;
+        padding: 56px 16px !important;
+      }
+      .section-newsletter h2, [data-store="home-newsletter"] h2 {
+        font-size: 26px !important;
       }
       .section-newsletter form, [data-store="home-newsletter"] form {
         flex-direction: column !important;
         gap: 0 !important;
       }
       .section-newsletter input[type="email"],
-      [data-store="home-newsletter"] input[type="email"] {
-        border-right: 1px solid var(--border) !important;
+      [data-store="home-newsletter"] input[type="email"],
+      .section-newsletter input:not([type="submit"]):not([type="button"]) {
+        border-right: 1px solid rgba(255,255,255,0.4) !important;
         border-bottom: none !important;
       }
       .section-newsletter button, [data-store="home-newsletter"] button {
         width: 100% !important;
+      }
+    }
+
+    /* ═══ Frases elegantes na Home (estilo Principessa) ═══ */
+    #mj-editorial-phrase {
+      text-align: center;
+      padding: 56px 24px;
+      background: var(--bg-site);
+    }
+    #mj-editorial-phrase .phrase-main {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 38px;
+      font-weight: 400;
+      color: var(--text-primary);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+    #mj-editorial-phrase .phrase-main em {
+      font-style: italic;
+      color: var(--raspberry);
+      text-transform: lowercase;
+    }
+    #mj-editorial-phrase .phrase-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    @media (max-width: 768px) {
+      #mj-editorial-phrase .phrase-main {
+        font-size: 26px;
+      }
+      #mj-editorial-phrase .phrase-sub {
+        font-size: 11px;
+        letter-spacing: 2px;
       }
     }
 
@@ -1044,10 +1094,39 @@
     replaceProductLabels();
   }
 
-  // ═══ 9. Run everything on DOM ready ═══
+  // ═══ 9. Inject editorial phrase on homepage (estilo Principessa) ═══
+  function injectEditorialPhrase() {
+    if (window.location.pathname !== '/' && window.location.pathname !== '') return;
+    if (document.getElementById('mj-editorial-phrase')) return;
+
+    var phrases = [
+      { main: 'A POESIA DE SER <em>única</em>', sub: 'MODA CRISTÃ COM PROPÓSITO' },
+      { main: 'ELEGÂNCIA QUE <em>inspira</em>', sub: 'DO CEARÁ PARA TODO O BRASIL' },
+      { main: 'MODÉSTIA E <em>sofisticação</em>', sub: 'CADA PEÇA CONTA UMA HISTÓRIA' }
+    ];
+    var phrase = phrases[Math.floor(Math.random() * phrases.length)];
+
+    var section = document.createElement('div');
+    section.id = 'mj-editorial-phrase';
+    section.innerHTML =
+      '<div class="phrase-main">' + phrase.main + '</div>' +
+      '<div class="phrase-sub">' + phrase.sub + '</div>';
+
+    // Insert after banner/slider, before products
+    var slider = document.querySelector('.js-home-slider-section, .home-slider, .js-home-slider');
+    var productSection = document.querySelector('.js-home-sections-container');
+    if (slider && slider.parentNode) {
+      slider.parentNode.insertBefore(section, slider.nextSibling);
+    } else if (productSection) {
+      productSection.insertBefore(section, productSection.firstChild);
+    }
+  }
+
+  // ═══ 10. Run everything on DOM ready ═══
   function init() {
     replaceProductLabels();
     fixCategoryLinks();
+    injectEditorialPhrase();
 
     // Inject atacado bar ONLY on cart/checkout pages
     if (isCartOrCheckoutPage()) {
@@ -1060,6 +1139,7 @@
     // Re-run on dynamic content changes
     var observer = new MutationObserver(function(mutations) {
       replaceProductLabels();
+      fixCategoryLinks();
       // Only inject atacado bar on cart/checkout pages
       if (isCartOrCheckoutPage() && !document.getElementById('mj-atacado-bar')) {
         injectAtacadoBar();

@@ -820,6 +820,13 @@
     }
     #mj-atacado-bar strong { color: var(--raspberry); }
 
+    /* ═══ Esconder newsletter duplicada do footer ═══ */
+    footer .js-newsletter,
+    footer.js-footer .js-newsletter,
+    footer.js-footer .newsletter {
+      display: none !important;
+    }
+
     /* ═══ Footer — PRETO elegante (estilo LV Store) ═══ */
     footer, .footer {
       background-color: #0A0A0A !important;

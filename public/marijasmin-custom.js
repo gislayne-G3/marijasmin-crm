@@ -1202,50 +1202,54 @@
     if (window.location.pathname !== '/' && window.location.pathname !== '') return;
     if (document.getElementById('mj-editorial')) return;
 
-    // Find the two banner/textbanner images from the home
-    var bannerImages = document.querySelectorAll(
-      '.js-textbanner-image, .textbanner-image, ' +
-      '.section-banners-home img, .js-home-banners-section img, ' +
-      '[data-store="home-banners"] img'
-    );
+    // Helper to extract best URL from lazy-loaded image
+    function getImgUrl(img) {
+      // Try currentSrc first, then src, then data attributes
+      if (img.currentSrc) return img.currentSrc;
+      if (img.src && !img.src.includes('data:image')) return img.src;
+      // data-srcset has multiple URLs — get the largest one
+      var srcset = img.dataset.srcset || img.srcset || '';
+      if (srcset) {
+        var parts = srcset.split(',');
+        // Get last entry (usually largest)
+        var last = parts[parts.length - 1].trim().split(' ')[0];
+        if (last) return last;
+      }
+      // Fallback to data-src
+      return img.dataset.src || '';
+    }
 
-    // Only create if we have at least 2 images
+    // Find images from banner-categories section (has 2 editorial photos)
+    var bannerSection = document.querySelector('[data-store="home-banner-categories"]');
+    var bannerImages = bannerSection
+      ? bannerSection.querySelectorAll('img')
+      : document.querySelectorAll('.js-textbanner-image');
+
     if (bannerImages.length < 2) return;
 
-    var img1Src = bannerImages[0].src || bannerImages[0].dataset.src || bannerImages[0].dataset.srcset;
-    var img2Src = bannerImages[1].src || bannerImages[1].dataset.src || bannerImages[1].dataset.srcset;
+    var img1Src = getImgUrl(bannerImages[0]);
+    var img2Src = getImgUrl(bannerImages[1]);
     if (!img1Src || !img2Src) return;
-
-    // Get first src from srcset if needed
-    if (img1Src && img1Src.includes(',')) img1Src = img1Src.split(',')[0].trim().split(' ')[0];
-    if (img2Src && img2Src.includes(',')) img2Src = img2Src.split(',')[0].trim().split(' ')[0];
 
     var section = document.createElement('div');
     section.id = 'mj-editorial';
     section.innerHTML =
       '<div class="editorial-text top">MODA</div>' +
       '<div class="editorial-photos">' +
-        '<div class="editorial-photo"><img src="' + img1Src + '" alt="Marijasmin Editorial"></div>' +
-        '<div class="editorial-photo"><img src="' + img2Src + '" alt="Marijasmin Editorial"></div>' +
+        '<div class="editorial-photo"><img src="' + img1Src + '" alt="Marijasmin Editorial" loading="eager"></div>' +
+        '<div class="editorial-photo"><img src="' + img2Src + '" alt="Marijasmin Editorial" loading="eager"></div>' +
       '</div>' +
       '<div class="editorial-text bottom">CRISTÃ</div>';
 
-    // Insert after product section or after slider
-    var productSection = document.querySelector(
-      '.js-home-featured-products-section, [data-store="home-products-featured"]'
-    );
-    var sectionsContainer = document.querySelector('.js-home-sections-container');
+    // Insert after featured products section
+    var productSection = document.querySelector('[data-store="home-products-featured"]');
     if (productSection && productSection.parentNode) {
       productSection.parentNode.insertBefore(section, productSection.nextSibling);
-    } else if (sectionsContainer) {
-      // Insert in the middle of sections
-      var children = sectionsContainer.children;
-      var midpoint = Math.floor(children.length / 2);
-      if (children[midpoint]) {
-        sectionsContainer.insertBefore(section, children[midpoint]);
-      } else {
-        sectionsContainer.appendChild(section);
-      }
+    }
+
+    // Hide original banner-categories since we're using its images
+    if (bannerSection) {
+      bannerSection.style.display = 'none';
     }
   }
 
@@ -1283,7 +1287,7 @@
     fixCategoryLinks();
     hideFooterNewsletter();
     injectEditorialPhrase();
-    setTimeout(injectEditorialSection, 1500); // Wait for lazy images to load
+    setTimeout(injectEditorialSection, 2500); // Wait for lazy images to load
 
     // Inject atacado bar ONLY on cart/checkout pages
     if (isCartOrCheckoutPage()) {

@@ -392,62 +392,79 @@
       margin-right: auto !important;
     }
 
-    /* ═══ Newsletter — Destaque visual forte ═══ */
-    .section-newsletter, [data-store="home-newsletter"] {
-      background-color: var(--raspberry) !important;
-      color: #FFFFFF !important;
+    /* ═══ Newsletter — Estilo Principessa (fundo claro, elegante) ═══ */
+    .section-newsletter, [data-store="home-newsletter"],
+    .newsletter-section, .js-newsletter {
+      background-color: var(--bg-warm) !important;
+      color: var(--text-primary) !important;
       text-align: center !important;
-      padding: 64px 24px !important;
+      padding: 72px 24px !important;
+      border-top: 1px solid var(--border-light) !important;
+      border-bottom: 1px solid var(--border-light) !important;
     }
     .section-newsletter h2, [data-store="home-newsletter"] h2 {
-      color: #FFFFFF !important;
+      color: var(--text-primary) !important;
       font-family: 'Cormorant Garamond', serif !important;
       font-size: 32px !important;
-      margin-bottom: 12px !important;
+      font-weight: 400 !important;
+      margin-bottom: 8px !important;
+      letter-spacing: 1px !important;
     }
     .section-newsletter p, [data-store="home-newsletter"] p,
     .section-newsletter .text-small {
-      color: rgba(255,255,255,0.85) !important;
+      color: var(--text-muted) !important;
       font-size: 14px !important;
-      margin-bottom: 24px !important;
+      margin-bottom: 28px !important;
+      font-family: 'Inter', sans-serif !important;
+      line-height: 1.6 !important;
     }
     .section-newsletter form, [data-store="home-newsletter"] form {
       display: flex !important;
       justify-content: center !important;
       gap: 0 !important;
-      max-width: 480px !important;
+      max-width: 460px !important;
       margin: 0 auto !important;
     }
     .section-newsletter input[type="email"],
-    [data-store="home-newsletter"] input[type="email"] {
-      background: rgba(255,255,255,0.15) !important;
-      border: 1px solid rgba(255,255,255,0.4) !important;
-      color: #FFFFFF !important;
+    [data-store="home-newsletter"] input[type="email"],
+    .section-newsletter input[type="text"],
+    [data-store="home-newsletter"] input[type="text"] {
+      background: #FFFFFF !important;
+      border: 1px solid var(--border) !important;
+      border-right: none !important;
+      color: var(--text-primary) !important;
       border-radius: 0 !important;
       padding: 14px 18px !important;
       flex: 1 !important;
       font-size: 14px !important;
+      font-family: 'Inter', sans-serif !important;
     }
-    .section-newsletter input[type="email"]::placeholder {
-      color: rgba(255,255,255,0.6) !important;
+    .section-newsletter input[type="email"]::placeholder,
+    [data-store="home-newsletter"] input::placeholder {
+      color: var(--text-muted) !important;
     }
     .section-newsletter button,
-    [data-store="home-newsletter"] button {
-      background-color: #000000 !important;
+    [data-store="home-newsletter"] button,
+    .section-newsletter input[type="submit"],
+    [data-store="home-newsletter"] input[type="submit"] {
+      background-color: var(--raspberry) !important;
       color: #FFFFFF !important;
-      border: none !important;
+      border: 1px solid var(--raspberry) !important;
       border-radius: 0 !important;
       padding: 14px 28px !important;
       text-transform: uppercase !important;
       letter-spacing: 1.5px !important;
-      font-size: 12px !important;
+      font-size: 11px !important;
       font-weight: 600 !important;
       cursor: pointer !important;
-      transition: background-color 0.25s ease !important;
+      transition: all 0.25s ease !important;
+      font-family: 'Inter', sans-serif !important;
+      white-space: nowrap !important;
     }
     .section-newsletter button:hover,
     [data-store="home-newsletter"] button:hover {
-      background-color: #333333 !important;
+      background-color: var(--raspberry-dark) !important;
+      border-color: var(--raspberry-dark) !important;
     }
     @media (max-width: 768px) {
       .section-newsletter, [data-store="home-newsletter"] {
@@ -455,7 +472,12 @@
       }
       .section-newsletter form, [data-store="home-newsletter"] form {
         flex-direction: column !important;
-        gap: 10px !important;
+        gap: 0 !important;
+      }
+      .section-newsletter input[type="email"],
+      [data-store="home-newsletter"] input[type="email"] {
+        border-right: 1px solid var(--border) !important;
+        border-bottom: none !important;
       }
       .section-newsletter button, [data-store="home-newsletter"] button {
         width: 100% !important;
@@ -701,14 +723,30 @@
     footer li, .footer li {
       margin-bottom: 8px !important;
     }
-    /* Footer payment icons / stamps */
+    /* Footer payment/shipping icons — sem filtro para manter visíveis */
     footer img, .footer img {
-      filter: brightness(0) invert(1) !important;
-      opacity: 0.6 !important;
+      filter: none !important;
+      opacity: 0.85 !important;
       transition: opacity 0.2s ease !important;
+      max-height: 28px !important;
     }
     footer img:hover, .footer img:hover {
       opacity: 1 !important;
+    }
+    /* Selos de segurança e stamps */
+    .footer-payments, .payment-icons, .js-payment-icons,
+    .footer-shipping, .shipping-icons {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 8px !important;
+      align-items: center !important;
+    }
+    .footer-payments img, .payment-icons img,
+    .footer-shipping img, .shipping-icons img {
+      background: #FFFFFF !important;
+      padding: 4px 6px !important;
+      border-radius: 4px !important;
+      max-height: 24px !important;
     }
     /* Footer bottom / copyright */
     .footer-legal, .powered-by, .footer-bottom {
@@ -828,21 +866,26 @@
   topbar.innerHTML = marqueeHTML;
   document.body.insertBefore(topbar, document.body.firstChild);
 
-  // ═══ 4. Replace product label tags ═══
+  // ═══ 4. Replace product label tags (somente nos cards de produto, nunca no header/carrinho) ═══
   function replaceProductLabels() {
-    var labels = document.querySelectorAll('.label, .badge, .product-label, .js-stock-label');
-    labels.forEach(function(label) {
-      var text = label.textContent.trim();
-      // Replace percentage discount labels with atacado messaging
-      if (text.match(/\d+%/) || text.match(/^\-?\d+/)) {
-        label.textContent = 'COMPRE NO ATACADO A PARTIR DE 5 PEÇAS';
-        label.style.backgroundColor = '#000000';
-        label.style.color = '#FFFFFF';
-        label.style.fontWeight = '600';
-        label.style.fontSize = '9px';
-        label.style.letterSpacing = '0.3px';
-        label.style.padding = '5px 10px';
-      }
+    var productContainers = document.querySelectorAll(
+      '.js-item-product, .item-product, .product-card, .product-page, ' +
+      '.js-product-table, .product-table, #mj-home-carousel'
+    );
+    productContainers.forEach(function(container) {
+      var labels = container.querySelectorAll('.label, .badge, .product-label, .js-stock-label');
+      labels.forEach(function(label) {
+        var text = label.textContent.trim();
+        if (text.match(/\d+%/) || text.match(/^\-?\d+/)) {
+          label.textContent = 'COMPRE NO ATACADO A PARTIR DE 5 PEÇAS';
+          label.style.backgroundColor = '#000000';
+          label.style.color = '#FFFFFF';
+          label.style.fontWeight = '600';
+          label.style.fontSize = '9px';
+          label.style.letterSpacing = '0.3px';
+          label.style.padding = '5px 10px';
+        }
+      });
     });
   }
 
@@ -883,15 +926,49 @@
     cartContainer.insertBefore(bar, cartContainer.firstChild);
   }
 
-  // ═══ 6. Fix category menu links ═══
+  // ═══ 6. Fix category menu links + remove non-product pages from menu ═══
   function fixCategoryLinks() {
-    var navLinks = document.querySelectorAll('.nav-primary a, .nav-desktop a, .nav-mobile a, nav a');
+    // Pages to hide from main navigation (not product categories)
+    var pagesToHide = [
+      'quem-somos', 'politica-de-troca', 'politica-troca',
+      'faq', 'perguntas-frequentes', 'termos', 'termos-de-uso',
+      'politica-de-privacidade', 'politica-privacidade',
+      'contato', 'atacado'
+    ];
+
+    var navLinks = document.querySelectorAll(
+      '.nav-primary a, .nav-desktop a, .nav-mobile a, ' +
+      '.nav-primary li a, .nav-desktop li a, .nav-mobile li a, ' +
+      'nav.nav a, .js-nav-list a'
+    );
     navLinks.forEach(function(link) {
-      var href = link.getAttribute('href');
-      if (!href) return;
+      var href = (link.getAttribute('href') || '').toLowerCase();
+      var text = (link.textContent || '').trim().toLowerCase();
+
       // Fix double slashes
       if (href.match(/\/\//g) && !href.match(/^https?:/)) {
         link.setAttribute('href', href.replace(/\/\//g, '/'));
+      }
+
+      // Hide non-product pages from main menu
+      var shouldHide = pagesToHide.some(function(page) {
+        return href.includes(page) || text.includes(page.replace(/-/g, ' '));
+      });
+      // Also hide by common page names
+      if (text === 'quem somos' || text === 'política de troca' ||
+          text === 'faq' || text === 'termos de uso' ||
+          text === 'política de privacidade' || text === 'contato' ||
+          text === 'atacado') {
+        shouldHide = true;
+      }
+
+      if (shouldHide) {
+        var li = link.closest('li');
+        if (li) {
+          li.style.display = 'none';
+        } else {
+          link.style.display = 'none';
+        }
       }
     });
   }

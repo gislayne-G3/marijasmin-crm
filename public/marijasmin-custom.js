@@ -450,4 +450,60 @@
     msgs[current].classList.add('active');
   }, 4000);
 
+  // 4. Inject LocalBusiness structured data (SEO)
+  var ld = document.createElement('script');
+  ld.type = 'application/ld+json';
+  ld.textContent = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "ClothingStore",
+    "name": "Marijasmin",
+    "description": "Moda feminina cristã e modesta. De Fortaleza para todo o Brasil.",
+    "url": "https://www.marijasmin.com.br",
+    "logo": "https://www.marijasmin.com.br/logo.png",
+    "image": "https://www.marijasmin.com.br/logo.png",
+    "telephone": "+55-85-99254-2937",
+    "email": "contato@marijasmin.com.br",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Rua Fernando Fialho, 112 - Mart Office L25",
+      "addressLocality": "Fortaleza",
+      "addressRegion": "CE",
+      "postalCode": "60711-120",
+      "addressCountry": "BR"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": -3.7927,
+      "longitude": -38.5570
+    },
+    "sameAs": [
+      "https://instagram.com/usemarijasmin",
+      "https://www.facebook.com/usemarijasmin"
+    ],
+    "priceRange": "$$",
+    "paymentAccepted": "Cartão de Crédito, Pix, Boleto",
+    "currenciesAccepted": "BRL",
+    "areaServed": {
+      "@type": "Country",
+      "name": "Brasil"
+    },
+    "brand": {
+      "@type": "Brand",
+      "name": "Marijasmin"
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Moda Feminina Cristã",
+      "itemListElement": [
+        {"@type": "OfferCatalog", "name": "Vestidos"},
+        {"@type": "OfferCatalog", "name": "Conjuntos"},
+        {"@type": "OfferCatalog", "name": "Macacões"},
+        {"@type": "OfferCatalog", "name": "Blusas"},
+        {"@type": "OfferCatalog", "name": "Saias"},
+        {"@type": "OfferCatalog", "name": "Calças"}
+      ]
+    }
+  });
+  document.head.appendChild(ld);
+
 })();

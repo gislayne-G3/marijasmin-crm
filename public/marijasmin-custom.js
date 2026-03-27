@@ -536,7 +536,7 @@
   var messages = [
     'Atacarejo Marijasmin \u2014 compre a partir de 1 pe\u00e7a ou monte seu atacado',
     'Frete gr\u00e1tis no atacado acima de R$1.500 para todo o Brasil',
-    'Atacado a partir de R$350 \u2014 pre\u00e7os exclusivos para revendedoras',
+    'Atacado a partir de 5 pe\u00e7as \u2014 pre\u00e7os exclusivos para revendedoras',
     'Parcelamos em at\u00e9 3x sem juros \u2014 varejo e atacado',
     'Junte-se \u00e0 comunidade Marijasmin \u2014 mais de 500 revendedoras no Brasil'
   ];

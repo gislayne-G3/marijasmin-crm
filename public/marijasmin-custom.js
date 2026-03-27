@@ -512,11 +512,11 @@
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(80px, 14vw, 200px);
       font-weight: 300;
-      color: rgba(129, 9, 71, 0.08);
+      color: rgba(129, 9, 71, 0.15);
       text-transform: uppercase;
       letter-spacing: 12px;
       line-height: 0.9;
-      z-index: 1;
+      z-index: 5;
       pointer-events: none;
       white-space: nowrap;
     }

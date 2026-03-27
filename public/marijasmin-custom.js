@@ -105,23 +105,49 @@
     a { color: var(--raspberry); }
     a:hover { color: var(--raspberry-dark); }
 
-    /* ═══ Product Cards ═══ */
+    /* ═══ Product Cards (insights LV Store + Saint Germain) ═══ */
     .js-item-product, .item-product, .product-card {
       background: var(--bg-card) !important;
       border: 0.5px solid var(--border) !important;
       border-radius: 4px !important;
       box-shadow: none !important;
       transition: border-color 0.25s ease !important;
-      overflow: hidden;
+      overflow: hidden !important;
     }
     .js-item-product:hover, .item-product:hover {
       border-color: var(--petal) !important;
     }
+    /* Zoom suave na imagem ao hover (Saint Germain style) */
+    .js-item-product img, .item-product img, .product-card img {
+      transition: transform 0.6s ease !important;
+    }
+    .js-item-product:hover img, .item-product:hover img, .product-card:hover img {
+      transform: scale(1.08) !important;
+    }
+    /* Mix-blend-mode para fotos com fundo branco (efeito profissional) */
+    .js-item-product .item-image img,
+    .item-product .item-image img {
+      mix-blend-mode: multiply !important;
+    }
+    /* Preço destaque */
     .js-price-display, .item-price, .price,
     .js-product-price, .product-price {
       color: var(--raspberry) !important;
       font-weight: 600 !important;
     }
+    /* Preço antigo riscado */
+    .js-compare-price-display, .compare-at-price,
+    .price-compare, .item-price-compare {
+      color: var(--text-muted) !important;
+      text-decoration: line-through !important;
+      font-size: 13px !important;
+    }
+    /* Parcelas visíveis (LV Store insight) */
+    .js-installment, .installment, .item-installment {
+      font-size: 12px !important;
+      color: var(--text-muted) !important;
+    }
+    /* Labels/badges */
     .label, .badge, .js-stock-label, .product-label {
       background-color: var(--raspberry) !important;
       color: #FFFFFF !important;
@@ -129,6 +155,16 @@
       font-size: 10px !important;
       text-transform: uppercase !important;
       letter-spacing: 0.5px !important;
+    }
+    /* Promoção label verde */
+    .label-accent, .label-discount {
+      background-color: #4BB98C !important;
+    }
+    /* Última peça (urgência) */
+    .js-last-item, .last-item-label {
+      color: #dd7774 !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
     }
 
     /* ═══ Home Sections Spacing ═══ */
@@ -341,11 +377,82 @@
       font-weight: 500 !important;
     }
 
-    /* ═══ Cart ═══ */
+    /* ═══ Cart / Mini-Cart (insights LV Store) ═══ */
     .cart-summary, .js-ajax-cart-wrapper {
       background-color: var(--bg-card) !important;
       box-shadow: none !important;
       border: 0.5px solid var(--border) !important;
+    }
+    /* Notificação de item adicionado */
+    .js-alert-added-to-cart, .notification-cart,
+    .js-cart-notification {
+      background-color: var(--raspberry) !important;
+      color: #FFFFFF !important;
+      border-radius: 4px !important;
+    }
+    /* Barra de frete grátis no carrinho */
+    .js-ship-free-progress, .free-shipping-bar,
+    .js-free-shipping-bar {
+      background-color: var(--border-light) !important;
+      border-radius: 2px !important;
+      overflow: hidden !important;
+    }
+    .js-ship-free-progress-bar, .free-shipping-bar-fill {
+      background-color: var(--raspberry) !important;
+      transition: width 0.4s ease !important;
+    }
+    .js-ship-free-text, .free-shipping-text {
+      font-size: 12px !important;
+      color: var(--text-primary) !important;
+    }
+    /* Checkout button no carrinho */
+    .cart-btn-checkout, .js-cart-checkout-btn,
+    .btn-to-checkout {
+      background-color: var(--raspberry) !important;
+      color: #FFFFFF !important;
+      font-size: 13px !important;
+      text-transform: uppercase !important;
+      letter-spacing: 1px !important;
+      padding: 14px 24px !important;
+      border-radius: 2px !important;
+      width: 100% !important;
+    }
+    /* Subtotal no carrinho */
+    .cart-subtotal, .js-cart-subtotal {
+      font-weight: 600 !important;
+      color: var(--text-primary) !important;
+    }
+
+    /* ═══ Product Page — Conversão ═══ */
+    .product-page .js-product-price,
+    .product-page .product-price {
+      font-size: 24px !important;
+      color: var(--raspberry) !important;
+    }
+    .product-page .js-compare-price-display,
+    .product-page .compare-at-price {
+      font-size: 16px !important;
+      color: var(--text-muted) !important;
+    }
+    .product-page .js-installment,
+    .product-page .installment {
+      font-size: 14px !important;
+      color: var(--text-primary) !important;
+      margin-top: 4px !important;
+    }
+    /* Botão comprar na product page */
+    .product-page .js-addtocart,
+    .product-page #btn-add-to-cart {
+      font-size: 14px !important;
+      padding: 16px 32px !important;
+      width: 100% !important;
+    }
+    /* Frete calculator na product page */
+    .shipping-calculator, .js-shipping-calculator-container {
+      border: 0.5px solid var(--border) !important;
+      border-radius: 4px !important;
+      padding: 16px !important;
+      background: var(--bg-warm) !important;
     }
 
     /* ═══ Footer ═══ */

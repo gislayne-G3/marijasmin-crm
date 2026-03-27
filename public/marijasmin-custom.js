@@ -1285,7 +1285,23 @@
   }
 
   // ═══ 10. Run everything on DOM ready ═══
+  // SEO: Set home page meta tags
+  function setHomeSEO() {
+    if (window.location.pathname !== '/' && window.location.pathname !== '') return;
+    document.title = 'Marijasmin | Moda Feminina Cristã e Modesta';
+    var metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', 'Moda feminina cristã e modesta feita em Fortaleza. Vestidos, conjuntos e peças que honram sua essência. Varejo e atacado para todo o Brasil.');
+    } else {
+      var meta = document.createElement('meta');
+      meta.name = 'description';
+      meta.content = 'Moda feminina cristã e modesta feita em Fortaleza. Vestidos, conjuntos e peças que honram sua essência. Varejo e atacado para todo o Brasil.';
+      document.head.appendChild(meta);
+    }
+  }
+
   function init() {
+    setHomeSEO();
     replaceProductLabels();
     fixCategoryLinks();
     hideFooterNewsletter();

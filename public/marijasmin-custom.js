@@ -822,9 +822,16 @@
 
     /* ═══ Esconder newsletter duplicada do footer ═══ */
     footer .js-newsletter,
+    footer .js-newsletter.newsletter,
     footer.js-footer .js-newsletter,
-    footer.js-footer .newsletter {
+    footer.js-footer .newsletter,
+    footer.js-footer .js-newsletter.newsletter,
+    footer .newsletter {
       display: none !important;
+      height: 0 !important;
+      overflow: hidden !important;
+      padding: 0 !important;
+      margin: 0 !important;
     }
 
     /* ═══ Footer — PRETO elegante (estilo LV Store) ═══ */
@@ -1062,6 +1069,16 @@
     cartContainer.insertBefore(bar, cartContainer.firstChild);
   }
 
+  // ═══ 5b. Hide footer newsletter (keep only the home one) ═══
+  function hideFooterNewsletter() {
+    var footer = document.querySelector('footer, .js-footer');
+    if (!footer) return;
+    var nl = footer.querySelector('.js-newsletter, .newsletter');
+    if (nl) {
+      nl.style.display = 'none';
+    }
+  }
+
   // ═══ 6. Fix category menu links + remove non-product pages from menu ═══
   function fixCategoryLinks() {
     // Pages to hide from main navigation (not product categories)
@@ -1264,6 +1281,7 @@
   function init() {
     replaceProductLabels();
     fixCategoryLinks();
+    hideFooterNewsletter();
     injectEditorialPhrase();
     setTimeout(injectEditorialSection, 1500); // Wait for lazy images to load
 

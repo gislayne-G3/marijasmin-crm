@@ -427,11 +427,11 @@
   var topbar = document.createElement('div');
   topbar.id = 'mj-topbar';
   var messages = [
-    'Moda feminina cristã e modesta \u2014 Fortaleza para o Brasil',
-    'Frete grátis acima de R$299 para todo o Brasil',
-    'Parcelamos em até 3x sem juros',
-    'Troca grátis em até 7 dias após entrega',
-    'Atacado a partir de R$350 \u2014 Seja revendedora Marijasmin'
+    'Atacarejo Marijasmin \u2014 compre a partir de 1 pe\u00e7a ou monte seu atacado',
+    'Frete gr\u00e1tis no atacado acima de R$1.500 para todo o Brasil',
+    'Atacado a partir de R$350 \u2014 pre\u00e7os exclusivos para revendedoras',
+    'Parcelamos em at\u00e9 3x sem juros \u2014 varejo e atacado',
+    'Junte-se \u00e0 comunidade Marijasmin \u2014 mais de 500 revendedoras no Brasil'
   ];
   messages.forEach(function(msg, i) {
     var span = document.createElement('span');
@@ -457,7 +457,7 @@
     "@context": "https://schema.org",
     "@type": "ClothingStore",
     "name": "Marijasmin",
-    "description": "Moda feminina cristã e modesta. De Fortaleza para todo o Brasil.",
+    "description": "Atacarejo de moda feminina cristã e modesta. Compre a partir de 1 peça ou monte seu atacado. De Fortaleza para todo o Brasil.",
     "url": "https://www.marijasmin.com.br",
     "logo": "https://www.marijasmin.com.br/logo.png",
     "image": "https://www.marijasmin.com.br/logo.png",

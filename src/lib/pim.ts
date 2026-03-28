@@ -30,6 +30,8 @@ export interface Produto {
   comprimento_tipo: string | null
   manga: string | null
   ocasioes: string[] | null
+  detalhes_tecido: string | null
+  cuidados_peca: string | null
   notas_fotos: string | null
   description_generated_at: string | null
   nuvemshop_last_sync: string | null
@@ -272,69 +274,91 @@ const GUIA_MEDIDAS: Record<string, string> = {
   manga: 'Meça do ombro até o punho, com o braço levemente dobrado.',
 }
 
+// Labels de categoria para tabela de medidas
+const CAT_LABEL_TABELA: Record<string, string> = {
+  vestidos: 'VESTIDO', conjuntos: 'CONJUNTO', macacoes: 'MACACÃO',
+  blusas: 'BLUSA', calcas: 'CALÇA', saias: 'SAIA',
+}
+
+// Cuidados padrão quando o campo estiver vazio
+const CUIDADOS_PADRAO = [
+  'Lavar à mão ou na máquina no ciclo delicado',
+  'Usar sabão neutro',
+  'Não torcer — retire o excesso de água com uma toalha',
+  'Secar na sombra, em cabide',
+  'Passar em temperatura baixa, pelo avesso',
+  'Não usar alvejante',
+]
+
 export function gerarHtmlDescricao(
-  _produto: Produto,
+  produto: Produto,
   descricaoHtml: string,
-  cores: ProdutoCor[],
+  _cores: ProdutoCor[],
   medidas: ProdutoMedida[],
   campos: string[]
 ): string {
   // ── PALETA MARIJASMIN ─────────────────────────────────────────────────────
-  const COR  = '#810947'       // vinho-rosa (cor principal da marca)
-  const COR_DARK  = '#5a0630'  // versão mais escura para títulos
-  const COR_BG    = '#fdf0f5'  // rosa clarinho para fundos
-  const COR_BORDA = '#e8c0d2'  // borda suave rose
-  const COR_MUTED = '#7a4060'  // texto secundário dentro da paleta
+  const COR       = '#810947'
+  const COR_DARK  = '#5a0630'
+  const COR_BG    = '#fdf0f5'
+  const COR_BORDA = '#e8c0d2'
+  const COR_MUTED = '#7a4060'
 
-  // ── FOTOS DISPONÍVEIS (primeira cor com foto) ─────────────────────────────
-  const cor = cores[0]
-  const fotosDisp: string[] = []
-  if (cor) {
-    if (cor.foto_frente)  fotosDisp.push(cor.foto_frente)
-    if (cor.foto_costas)  fotosDisp.push(cor.foto_costas)
-    if (cor.foto_detalhe) fotosDisp.push(cor.foto_detalhe)
+  // ── ESTILOS DO ACCORDION ──────────────────────────────────────────────────
+  const accordionHeader = `cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid ${COR_BORDA};font-size:13px;font-weight:700;color:${COR_DARK};letter-spacing:0.5px;text-transform:uppercase;background:#fff`
+  const accordionBody = `padding:16px 18px;font-size:13px;color:#444;line-height:1.8`
+  const accordionPlus = `font-size:18px;color:${COR};font-weight:400`
+
+  // ── LIMPEZA: remove tudo injetado em saves anteriores ─────────────────────
+  let descLimpa = descricaoHtml
+    .replace(/\s*<div class="mj-accordion[\s\S]*$/, '')
+    .replace(/<div style="clear:both[^>]*>[\s\S]*$/, '')
+    .replace(/<div style="margin-top:3[26]px[\s\S]*$/, '')
+    .replace(/<div class="secao-foto">/g, '<div>')
+    .replace(/<img[^>]*alt="Foto do produto"[^>]*\/?>/g, '')
+    .replace(/<div style="display:flex[^>]*>\s*<img[^>]*>\s*<div style="flex:1[^>]*>([\s\S]*?)<\/div>\s*<\/div>/g, '<div>$1</div>')
+    .trim()
+
+  // ── SEÇÃO 1: DESCRIÇÃO DO PRODUTO (sempre aberta) ────────────────────────
+  let html = `<div class="mj-accordion" style="border:1px solid ${COR_BORDA};border-radius:8px;overflow:hidden;font-family:sans-serif">`
+
+  html += `<div style="${accordionHeader};background:${COR_BG}">DESCRIÇÃO DO PRODUTO</div>`
+  html += `<div style="${accordionBody}">`
+  if (produto.nome) html += `<h3 style="font-size:16px;font-weight:700;color:${COR_DARK};margin:0 0 10px">${produto.nome}</h3>`
+  html += descLimpa || '<p style="color:#999">Sem descrição.</p>'
+  html += `</div>`
+
+  // ── SEÇÃO 2: DETALHES DO PRODUTO ─────────────────────────────────────────
+  const detalhes: string[] = []
+  if (produto.modelagem)        detalhes.push(`<strong>Modelagem:</strong> ${produto.modelagem}`)
+  if (produto.comprimento_tipo) detalhes.push(`<strong>Comprimento:</strong> ${produto.comprimento_tipo}`)
+  if (produto.manga)            detalhes.push(`<strong>Manga:</strong> ${produto.manga}`)
+  if (produto.categoria)        detalhes.push(`<strong>Categoria:</strong> ${CAT_LABEL_TABELA[produto.categoria] || produto.categoria}`)
+  if (produto.modelo_tamanho)   detalhes.push(`<strong>Modelo veste:</strong> ${produto.modelo_tamanho}${produto.modelo_altura ? ` (${produto.modelo_altura})` : ''}`)
+  if (produto.ocasioes?.length) detalhes.push(`<strong>Ideal para:</strong> ${produto.ocasioes.join(', ')}`)
+
+  if (detalhes.length) {
+    html += `<div style="${accordionHeader}"><span>DETALHES DO PRODUTO</span><span style="${accordionPlus}">+</span></div>`
+    html += `<div style="${accordionBody}">`
+    html += detalhes.map(d => `<p style="margin:0 0 6px">${d}</p>`).join('')
+    html += `</div>`
   }
 
-  // ── LIMPEZA: remove tudo que foi injetado em saves anteriores ─────────────
-  // 1. Apaga tabela de medidas (identificada pelo atributo único margin-top:32px)
-  let html = descricaoHtml.replace(/\s*<div style="margin-top:32px[\s\S]*$/, '').trim()
+  // ── SEÇÃO 3: DETALHES DO TECIDO ──────────────────────────────────────────
+  const tecido: string[] = []
+  if (produto.composicao) tecido.push(`<strong>Composição:</strong> ${produto.composicao}`)
+  if (produto.detalhes_tecido) {
+    produto.detalhes_tecido.split('\n').filter(l => l.trim()).forEach(l => tecido.push(l.trim()))
+  }
 
-  // 2. Normaliza abertura de <div class="secao-foto"> (remove qualquer style antigo)
-  html = html.replace(/(<div class="secao-foto")[^>]*>/g, '$1>')
+  if (tecido.length) {
+    html += `<div style="${accordionHeader}"><span>DETALHES DO TECIDO</span><span style="${accordionPlus}">+</span></div>`
+    html += `<div style="${accordionBody}">`
+    html += tecido.map(t => `<p style="margin:0 0 6px">${t}</p>`).join('')
+    html += `</div>`
+  }
 
-  // 3. Remove imgs injetadas (reconhecidas pelo alt "Foto do produto")
-  html = html.replace(/<img[^>]*alt="Foto do produto"[^>]*\/?>/g, '')
-
-  // 4. Remove clearfix legados
-  html = html.replace(/<div style="clear:both"><\/div>/g, '')
-
-  // 5. Desembrulha blocos flex gerados em saves anteriores (flex-wrapper → secao-foto limpo)
-  html = html.replace(
-    /<div style="display:flex[^>]*>\s*<img[^>]*>\s*<div style="flex:1[^>]*>([\s\S]*?)<\/div>\s*<\/div>/g,
-    '<div class="secao-foto">$1</div>'
-  )
-
-  // ── INJEÇÃO: flexbox (foto esquerda | texto direita) ─────────────────────
-  // Flexbox NÃO vaza para fora do container — diferente de float.
-  let fotoIdx = 0
-  const htmlComFotos = html.replace(
-    /<div class="secao-foto">([\s\S]*?)<\/div>/g,
-    (_full: string, conteudo: string) => {
-      const foto = fotosDisp[fotoIdx++]
-      if (!foto) {
-        return `<div style="margin-bottom:28px">${conteudo.trim()}</div>`
-      }
-      return (
-        `<div style="display:flex;align-items:flex-start;gap:20px;margin-bottom:28px">` +
-        `<img src="${foto}" style="width:130px;height:130px;border-radius:50%;` +
-        `object-fit:cover;flex-shrink:0;border:3px solid ${COR_BORDA}" alt="Foto do produto" />` +
-        `<div style="flex:1;min-width:0">${conteudo.trim()}</div>` +
-        `</div>`
-      )
-    }
-  )
-
-  // ── TABELA DE MEDIDAS (apenas se houver ao menos um campo preenchido) ─────
+  // ── SEÇÃO 4: TABELA DE MEDIDAS ───────────────────────────────────────────
   const temMedida = medidas.some(m =>
     campos.some(c => {
       const v = String(m.medidas?.[c] || '').trim()
@@ -342,58 +366,65 @@ export function gerarHtmlDescricao(
     })
   )
 
-  if (!temMedida) return `<div style="clear:both;float:none">${htmlComFotos}</div>`
+  if (temMedida) {
+    const medidasUnicas = medidas.filter(
+      (m, idx, arr) => arr.findIndex(x => x.tamanho === m.tamanho) === idx
+    )
 
-  const guiaTexto = campos
-    .filter(c => GUIA_MEDIDAS[c])
-    .map(c => `<li><strong>${LABEL_MEDIDAS[c] || c}:</strong> ${GUIA_MEDIDAS[c]}</li>`)
-    .join('')
+    const catLabel = CAT_LABEL_TABELA[produto.categoria] || produto.categoria?.toUpperCase() || ''
 
-  // Deduplicar medidas por tamanho (evita linhas duplicadas na tabela)
-  const medidasUnicas = medidas.filter(
-    (m, idx, arr) => arr.findIndex(x => x.tamanho === m.tamanho) === idx
-  )
+    html += `<div style="${accordionHeader}"><span>TABELA DE MEDIDAS (EM CM)</span><span style="${accordionPlus}">+</span></div>`
+    html += `<div style="${accordionBody}">`
 
-  const tabelaRows = medidasUnicas.map((m, rowIdx) => {
-    const numero = TAMANHO_NUMERO[m.tamanho] || ''
-    const bgRow = rowIdx % 2 === 0 ? '#fff' : COR_BG
-    return `<tr style="background:${bgRow}">
-      <td style="font-weight:700;padding:10px 14px;border-bottom:1px solid ${COR_BORDA};white-space:nowrap;color:${COR_DARK}">${m.tamanho}</td>
-      <td style="padding:10px 14px;border-bottom:1px solid ${COR_BORDA};text-align:center;color:${COR_MUTED};font-size:12px">${numero}</td>
-      ${campos.map(c => `<td style="padding:10px 14px;border-bottom:1px solid ${COR_BORDA};text-align:center;color:#333">${m.medidas?.[c] ? m.medidas[c] + ' cm' : '—'}</td>`).join('')}
-    </tr>`
-  }).join('')
+    if (catLabel) html += `<p style="font-size:12px;font-weight:700;color:${COR};margin:0 0 10px;text-transform:uppercase;letter-spacing:0.5px">${catLabel}</p>`
 
-  const tabelaHtml = `
-<div style="margin-top:36px">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-    <span style="font-size:18px">📏</span>
-    <h3 style="font-size:15px;font-weight:700;color:${COR_DARK};margin:0;letter-spacing:0.3px">Tabela de Medidas</h3>
-  </div>
-  <p style="font-size:12px;color:${COR_MUTED};margin:0 0 14px">As medidas abaixo são da <strong>peça</strong>, não do corpo. Adicione 2–4 cm para conforto.</p>
+    html += `<table style="width:100%;border-collapse:collapse;font-size:13px;border:1px solid ${COR_BORDA};border-radius:6px;overflow:hidden">`
+    html += `<thead><tr style="background:${COR};color:white">`
+    html += `<th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:600;letter-spacing:0.5px">TAM.</th>`
+    html += campos.map(c => `<th style="padding:10px 14px;text-align:center;font-size:11px;font-weight:600;letter-spacing:0.5px">${LABEL_MEDIDAS[c] || c}</th>`).join('')
+    html += `</tr></thead><tbody>`
 
-  <div style="border:1px solid ${COR_BORDA};border-radius:10px;overflow:hidden">
-    <table style="width:100%;border-collapse:collapse;font-size:13px">
-      <thead>
-        <tr style="background:${COR};color:white">
-          <th style="padding:10px 14px;text-align:left;font-size:12px;font-weight:600;letter-spacing:0.5px">TAM.</th>
-          <th style="padding:10px 14px;text-align:center;font-size:12px;font-weight:600;letter-spacing:0.5px">Nº</th>
-          ${campos.map(c => `<th style="padding:10px 14px;text-align:center;font-size:12px;font-weight:600;letter-spacing:0.5px">${LABEL_MEDIDAS[c] || c}</th>`).join('')}
-        </tr>
-      </thead>
-      <tbody>${tabelaRows}</tbody>
-    </table>
-  </div>
+    medidasUnicas.forEach((m, rowIdx) => {
+      const bgRow = rowIdx % 2 === 0 ? '#fff' : COR_BG
+      html += `<tr style="background:${bgRow}">`
+      html += `<td style="font-weight:700;padding:10px 14px;border-bottom:1px solid ${COR_BORDA};color:${COR_DARK}">${m.tamanho}</td>`
+      html += campos.map(c =>
+        `<td style="padding:10px 14px;border-bottom:1px solid ${COR_BORDA};text-align:center;color:#333">${m.medidas?.[c] ? m.medidas[c] : '—'}</td>`
+      ).join('')
+      html += `</tr>`
+    })
 
-  <div style="margin-top:14px;background:${COR_BG};border-left:3px solid ${COR};border-radius:0 8px 8px 0;padding:14px 18px">
-    <p style="font-size:12px;font-weight:700;color:${COR_DARK};margin:0 0 8px">✂️ Como tirar suas medidas:</p>
-    <ul style="margin:0;padding-left:18px;font-size:12px;color:#444;line-height:1.9">
-      ${guiaTexto}
-      <li><strong>Dica:</strong> use uma fita métrica flexível. Não aperte — deixe um dedo de folga para conforto.</li>
-    </ul>
-    <p style="font-size:11px;color:${COR_MUTED};margin:10px 0 0;font-style:italic">Ficou com dúvida sobre qual tamanho escolher? Fale conosco no WhatsApp — vamos te ajudar! 💜</p>
-  </div>
-</div>`
+    html += `</tbody></table>`
 
-  return `<div style="clear:both;float:none">${htmlComFotos}${tabelaHtml}</div>`
+    // ── Como Medir ──
+    const guiaItens = campos
+      .filter(c => GUIA_MEDIDAS[c])
+      .map(c => `<li><strong>${LABEL_MEDIDAS[c] || c}:</strong> ${GUIA_MEDIDAS[c]}</li>`)
+      .join('')
+
+    if (guiaItens) {
+      html += `<div style="margin-top:16px;padding:14px 18px;background:${COR_BG};border-left:3px solid ${COR};border-radius:0 6px 6px 0">`
+      html += `<p style="font-size:13px;font-weight:700;color:${COR_DARK};margin:0 0 8px">Como Medir</p>`
+      html += `<ul style="margin:0;padding-left:18px;font-size:12px;color:#444;line-height:1.9">${guiaItens}</ul>`
+      html += `</div>`
+    }
+
+    html += `</div>`
+  }
+
+  // ── SEÇÃO 5: CUIDADOS COM A PEÇA ─────────────────────────────────────────
+  const cuidadosTexto = produto.cuidados_peca?.trim()
+  const cuidadosLista = cuidadosTexto
+    ? cuidadosTexto.split('\n').filter(l => l.trim())
+    : CUIDADOS_PADRAO
+
+  html += `<div style="${accordionHeader}"><span>CUIDADOS COM A PEÇA</span><span style="${accordionPlus}">+</span></div>`
+  html += `<div style="${accordionBody}">`
+  html += `<ul style="margin:0;padding-left:18px;line-height:2">`
+  html += cuidadosLista.map(c => `<li>${c}</li>`).join('')
+  html += `</ul>`
+  html += `</div>`
+
+  html += `</div>` // fecha mj-accordion
+  return html
 }

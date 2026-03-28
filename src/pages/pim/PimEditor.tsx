@@ -521,6 +521,26 @@ export default function PimEditor() {
                 })}
               </div>
             </div>
+            <div style={{ marginTop: 14 }}>
+              <Field label="Detalhes do Tecido (linhas extras além da composição)">
+                <textarea
+                  value={produto.detalhes_tecido || ''}
+                  onChange={e => setProduto(p => p ? { ...p, detalhes_tecido: e.target.value } : p)}
+                  rows={3} placeholder="Ex: Tecido leve com caimento fluido&#10;Não transparente&#10;Com forro"
+                  style={{ ...inp, resize: 'vertical', fontSize: 11, lineHeight: 1.6 }}
+                />
+              </Field>
+            </div>
+            <div style={{ marginTop: 4 }}>
+              <Field label="Cuidados com a Peça">
+                <textarea
+                  value={produto.cuidados_peca || ''}
+                  onChange={e => setProduto(p => p ? { ...p, cuidados_peca: e.target.value } : p)}
+                  rows={4} placeholder="Deixe vazio para usar os cuidados padrão:&#10;Lavar à mão ou ciclo delicado&#10;Sabão neutro&#10;Secar na sombra..."
+                  style={{ ...inp, resize: 'vertical', fontSize: 11, lineHeight: 1.6 }}
+                />
+              </Field>
+            </div>
           </CollapsibleSection>
 
           {/* SEÇÃO 8 — Estoque (somente leitura) */}
@@ -651,45 +671,107 @@ export default function PimEditor() {
             </div>
           </div>
 
-          {/* Preview Descrição */}
-          {produto.descricao && (
-            <div style={{ marginTop: 16, background: '#FFFFFF', borderRadius: 6, padding: '18px', border: '0.5px solid #E8E6E0' }}>
-              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 16, fontWeight: 600, color: '#2E2E2E', margin: '0 0 12px' }}>Descrição</h3>
-              <div style={{ fontSize: 12, color: '#2E2E2E', lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: produto.descricao }} />
-            </div>
-          )}
+          {/* ═══ ACCORDION DE DESCRIÇÃO (idêntico ao site) ═══ */}
+          <div style={{ marginTop: 16, background: '#FFFFFF', borderRadius: 6, overflow: 'hidden', border: '0.5px solid #E8E6E0' }}>
 
-          {/* Preview Tabela de Medidas */}
-          {medidas.some(m => campos.some(c => m.medidas[c])) && (
-            <div style={{ marginTop: 16, background: '#FFFFFF', borderRadius: 6, padding: '18px', border: '0.5px solid #E8E6E0' }}>
-              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 16, fontWeight: 600, color: '#2E2E2E', margin: '0 0 12px' }}>📏 Tabela de Medidas</h3>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
-                <thead>
-                  <tr style={{ background: '#810947' }}>
-                    <th style={{ padding: '7px 10px', color: 'white', fontWeight: 600, fontSize: 10, textAlign: 'left' }}>TAM.</th>
-                    {campos.map(c => <th key={c} style={{ padding: '7px 10px', color: 'white', fontWeight: 600, fontSize: 10, textAlign: 'center' }}>{LABEL_MEDIDAS[c]}</th>)}
-                  </tr>
-                </thead>
-                <tbody>
-                  {TAMANHOS.map((t, ri) => (
-                    <tr key={t} style={{ background: ri % 2 === 0 ? '#fff' : '#fdf0f5' }}>
-                      <td style={{ padding: '7px 10px', fontWeight: 700, color: '#5a0630', borderBottom: '1px solid #e8c0d2' }}>{t}</td>
-                      {campos.map(c => (
-                        <td key={c} style={{ padding: '7px 10px', textAlign: 'center', color: '#333', borderBottom: '1px solid #e8c0d2' }}>
-                          {getMedida(t, c) ? `${getMedida(t, c)} cm` : '—'}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {produto.modelo_tamanho && (
-                <p style={{ fontSize: 10, color: '#7a4060', marginTop: 8, fontStyle: 'italic' }}>
-                  A modelo usa tamanho {produto.modelo_tamanho}{produto.modelo_altura && `, mede ${produto.modelo_altura}`}
-                </p>
+            {/* — DESCRIÇÃO DO PRODUTO (sempre aberto) — */}
+            <PreviewAccordion title="DESCRIÇÃO DO PRODUTO" defaultOpen>
+              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 15, fontWeight: 700, color: '#5a0630', margin: '0 0 8px' }}>
+                {produto.nome}
+              </h3>
+              {produto.descricao ? (
+                <div style={{ fontSize: 11, color: '#444', lineHeight: 1.8 }} dangerouslySetInnerHTML={{ __html: produto.descricao.replace(/<div class="mj-accordion[\s\S]*$/, '').replace(/<div style="clear:both[\s\S]*$/, '').trim() || '<p>Sem descrição.</p>' }} />
+              ) : (
+                <p style={{ fontSize: 11, color: '#999' }}>Sem descrição.</p>
               )}
-            </div>
-          )}
+            </PreviewAccordion>
+
+            {/* — DETALHES DO PRODUTO — */}
+            {(produto.modelagem || produto.comprimento_tipo || produto.manga || produto.ocasioes?.length) && (
+              <PreviewAccordion title="DETALHES DO PRODUTO">
+                {produto.modelagem && <p style={{ fontSize: 11, color: '#444', margin: '0 0 4px' }}><strong>Modelagem:</strong> {produto.modelagem}</p>}
+                {produto.comprimento_tipo && <p style={{ fontSize: 11, color: '#444', margin: '0 0 4px' }}><strong>Comprimento:</strong> {produto.comprimento_tipo}</p>}
+                {produto.manga && <p style={{ fontSize: 11, color: '#444', margin: '0 0 4px' }}><strong>Manga:</strong> {produto.manga}</p>}
+                {produto.modelo_tamanho && <p style={{ fontSize: 11, color: '#444', margin: '0 0 4px' }}><strong>Modelo veste:</strong> {produto.modelo_tamanho}{produto.modelo_altura ? ` (${produto.modelo_altura})` : ''}</p>}
+                {produto.ocasioes?.length ? <p style={{ fontSize: 11, color: '#444', margin: '0 0 4px' }}><strong>Ideal para:</strong> {produto.ocasioes.join(', ')}</p> : null}
+              </PreviewAccordion>
+            )}
+
+            {/* — DETALHES DO TECIDO — */}
+            {(produto.composicao || produto.detalhes_tecido) && (
+              <PreviewAccordion title="DETALHES DO TECIDO">
+                {produto.composicao && <p style={{ fontSize: 11, color: '#444', margin: '0 0 4px' }}><strong>Composição:</strong> {produto.composicao}</p>}
+                {produto.detalhes_tecido?.split('\n').filter(l => l.trim()).map((l, i) => (
+                  <p key={i} style={{ fontSize: 11, color: '#444', margin: '0 0 4px' }}>{l.trim()}</p>
+                ))}
+              </PreviewAccordion>
+            )}
+
+            {/* — TABELA DE MEDIDAS (EM CM) — */}
+            {medidas.some(m => campos.some(c => m.medidas[c])) && (
+              <PreviewAccordion title="TABELA DE MEDIDAS (EM CM)">
+                <p style={{ fontSize: 10, fontWeight: 700, color: '#810947', margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  {({ vestidos: 'VESTIDO', conjuntos: 'CONJUNTO', macacoes: 'MACACÃO', blusas: 'BLUSA', calcas: 'CALÇA', saias: 'SAIA' } as Record<string, string>)[produto.categoria] || produto.categoria?.toUpperCase()}
+                </p>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10 }}>
+                  <thead>
+                    <tr style={{ background: '#810947' }}>
+                      <th style={{ padding: '6px 8px', color: 'white', fontWeight: 600, fontSize: 9, textAlign: 'left' }}>TAM.</th>
+                      {campos.map(c => <th key={c} style={{ padding: '6px 8px', color: 'white', fontWeight: 600, fontSize: 9, textAlign: 'center' }}>{LABEL_MEDIDAS[c]}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {TAMANHOS.map((t, ri) => (
+                      <tr key={t} style={{ background: ri % 2 === 0 ? '#fff' : '#fdf0f5' }}>
+                        <td style={{ padding: '6px 8px', fontWeight: 700, color: '#5a0630', borderBottom: '1px solid #e8c0d2', fontSize: 10 }}>{t}</td>
+                        {campos.map(c => (
+                          <td key={c} style={{ padding: '6px 8px', textAlign: 'center', color: '#333', borderBottom: '1px solid #e8c0d2', fontSize: 10 }}>
+                            {getMedida(t, c) || '—'}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {/* Como Medir */}
+                <div style={{ marginTop: 10, padding: '10px 12px', background: '#fdf0f5', borderLeft: '3px solid #810947', borderRadius: '0 4px 4px 0' }}>
+                  <p style={{ fontSize: 10, fontWeight: 700, color: '#5a0630', margin: '0 0 6px' }}>Como Medir</p>
+                  <ul style={{ margin: 0, paddingLeft: 16, fontSize: 10, color: '#444', lineHeight: 1.8 }}>
+                    {campos.filter(c => ({
+                      busto: true, cintura: true, quadril: true, comprimento: true,
+                      comprimento_blusa: true, comprimento_saia: true, comprimento_total: true,
+                      entreperna: true, ombro: true, manga: true,
+                    } as Record<string, boolean>)[c]).map(c => (
+                      <li key={c}><strong>{LABEL_MEDIDAS[c]}:</strong> {({
+                        busto: 'Meça ao redor da parte mais larga do peito',
+                        cintura: 'Meça na parte mais estreita do tronco',
+                        quadril: 'Meça ao redor da parte mais larga dos quadris',
+                        comprimento: 'Meça do ombro até a barra',
+                        comprimento_blusa: 'Meça do ombro até a barra da blusa',
+                        comprimento_saia: 'Meça do cós até a barra da saia',
+                        comprimento_total: 'Meça do ombro até a barra, verticalmente',
+                        entreperna: 'Meça da virilha até o tornozelo',
+                        ombro: 'Meça de uma ponta do ombro à outra',
+                        manga: 'Meça do ombro até o punho',
+                      } as Record<string, string>)[c]}</li>
+                    ))}
+                  </ul>
+                </div>
+              </PreviewAccordion>
+            )}
+
+            {/* — CUIDADOS COM A PEÇA — */}
+            <PreviewAccordion title="CUIDADOS COM A PEÇA">
+              <ul style={{ margin: 0, paddingLeft: 16, fontSize: 11, color: '#444', lineHeight: 2 }}>
+                {(produto.cuidados_peca?.trim()
+                  ? produto.cuidados_peca.split('\n').filter(l => l.trim())
+                  : ['Lavar à mão ou ciclo delicado', 'Sabão neutro', 'Não torcer', 'Secar na sombra, em cabide', 'Passar em temperatura baixa, pelo avesso', 'Não usar alvejante']
+                ).map((c, i) => <li key={i}>{c.trim()}</li>)}
+              </ul>
+            </PreviewAccordion>
+
+          </div>
 
           {/* Preview SEO */}
           {produto.seo_title && (
@@ -728,6 +810,33 @@ function CollapsibleSection({ title, icon, children, defaultOpen = false }: {
       </button>
       {open && <div style={{ marginTop: 14 }}>{children}</div>}
     </div>
+  )
+}
+
+function PreviewAccordion({ title, children, defaultOpen = false }: {
+  title: string; children: React.ReactNode; defaultOpen?: boolean
+}) {
+  const [open, setOpen] = useState(defaultOpen)
+  return (
+    <>
+      <button onClick={() => setOpen(!open)} style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        width: '100%', padding: '11px 14px',
+        borderTop: '1px solid #e8c0d2', borderBottom: 'none',
+        background: open ? '#fdf0f5' : '#fff', cursor: 'pointer',
+        fontSize: 10, fontWeight: 700, color: '#5a0630',
+        letterSpacing: '0.5px', textTransform: 'uppercase' as const,
+        fontFamily: "'Inter', sans-serif", textAlign: 'left' as const,
+      }}>
+        <span>{title}</span>
+        <span style={{ fontSize: 16, color: '#810947', fontWeight: 400 }}>{open ? '−' : '+'}</span>
+      </button>
+      {open && (
+        <div style={{ padding: '12px 14px', borderTop: '1px solid #e8c0d2' }}>
+          {children}
+        </div>
+      )}
+    </>
   )
 }
 

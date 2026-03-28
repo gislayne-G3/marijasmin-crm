@@ -1020,6 +1020,17 @@
 
     /* ═══ Smooth scroll ═══ */
     html { scroll-behavior: smooth; }
+
+    /* ═══ Overflow containment — No horizontal scrollbar ═══ */
+    html, body {
+      overflow-x: hidden !important;
+    }
+    iframe, video, embed, object {
+      max-width: 100% !important;
+    }
+    #mj-topbar {
+      max-width: 100vw !important;
+    }
   `;
   document.head.appendChild(style);
 

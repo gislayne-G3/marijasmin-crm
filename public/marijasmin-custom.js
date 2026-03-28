@@ -1034,7 +1034,7 @@
     html, body {
       overflow-x: hidden !important;
     }
-    iframe, video, embed, object {
+    video, embed, object {
       max-width: 100% !important;
     }
     #mj-topbar {

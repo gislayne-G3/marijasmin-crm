@@ -119,16 +119,16 @@
     .js-cart-widget-btn, .cart-btn,
     .btn-submit, #btn-add-to-cart {
       background-color: var(--raspberry) !important;
-      border: 2px solid var(--raspberry) !important;
+      border: 1px solid var(--raspberry) !important;
       color: #FFFFFF !important;
-      border-radius: 30px !important;
+      border-radius: 6px !important;
       text-transform: uppercase !important;
-      letter-spacing: 1.5px !important;
+      letter-spacing: 1px !important;
       font-size: 12px !important;
       font-weight: 600 !important;
       box-shadow: none !important;
       transition: all 0.3s cubic-bezier(0.4,0,0.2,1) !important;
-      padding: 14px 32px !important;
+      padding: 10px 20px !important;
       cursor: pointer !important;
     }
     .btn-primary:hover, .js-addtocart:hover, .js-buy-now:hover,
@@ -141,14 +141,14 @@
     }
     .btn-secondary, .btn--secondary, .btn-link {
       background: transparent !important;
-      border: 2px solid var(--raspberry) !important;
+      border: 1px solid var(--raspberry) !important;
       color: var(--raspberry) !important;
-      border-radius: 30px !important;
+      border-radius: 6px !important;
       text-transform: uppercase !important;
-      letter-spacing: 1.5px !important;
-      font-size: 12px !important;
+      letter-spacing: 1px !important;
+      font-size: 11px !important;
       font-weight: 600 !important;
-      padding: 14px 32px !important;
+      padding: 8px 16px !important;
       transition: all 0.3s cubic-bezier(0.4,0,0.2,1) !important;
       cursor: pointer !important;
     }
@@ -973,41 +973,44 @@
       [data-store] h2 { font-size: 24px !important; }
       .product-page h1, .js-product-name { font-size: 22px !important; }
 
-      /* Mobile buttons fix */
+      /* Mobile buttons — compactos */
       .btn-primary, .js-addtocart, .js-buy-now,
       button[type="submit"], .btn--primary {
-        padding: 14px 24px !important;
+        padding: 10px 18px !important;
         font-size: 12px !important;
-        min-height: 48px !important;
+        min-height: 40px !important;
         touch-action: manipulation !important;
-        border-radius: 30px !important;
+        border-radius: 6px !important;
+      }
+      .btn-secondary, .btn--secondary, .btn-link {
+        padding: 8px 14px !important;
+        font-size: 11px !important;
+        border-radius: 6px !important;
+      }
+      /* Botao COMPRAR — destaque, full width */
+      .js-addtocart, .product-buy-btn, #btn-add-to-cart {
         width: 100% !important;
-      }
-      /* Mobile product page */
-      .product-page .js-addtocart,
-      .product-page #btn-add-to-cart {
-        padding: 16px 24px !important;
+        padding: 12px 20px !important;
         font-size: 13px !important;
-        min-height: 52px !important;
-        border-radius: 30px !important;
+        min-height: 44px !important;
       }
-      /* Mobile cart */
+      /* Botao checkout carrinho — destaque */
       .cart-btn-checkout, .js-cart-checkout-btn,
-      .btn-to-checkout {
-        min-height: 52px !important;
+      .btn-to-checkout, #go-to-checkout {
+        width: 100% !important;
+        min-height: 44px !important;
         font-size: 12px !important;
-        border-radius: 30px !important;
       }
-      /* Fix variant buttons mobile */
+      /* Botoes variantes — compactos */
       .js-color-variant, .color-variant,
       .variant-swatch, .js-btn-variant {
-        min-width: 40px !important;
-        min-height: 40px !important;
+        min-width: 36px !important;
+        min-height: 36px !important;
       }
       .js-btn-variant, .variant-btn {
-        min-height: 44px !important;
-        padding: 10px 16px !important;
-        font-size: 13px !important;
+        min-height: 38px !important;
+        padding: 6px 12px !important;
+        font-size: 12px !important;
       }
       /* Footer mobile padding */
       footer, .footer {

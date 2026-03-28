@@ -607,13 +607,44 @@
       text-transform: uppercase;
     }
     @media (max-width: 768px) {
-      #mj-editorial-phrase .phrase-main {
+      #mj-editorial-phrase .phrase-main,
+      #mj-editorial-phrase-bottom .phrase-main {
         font-size: 26px;
       }
-      #mj-editorial-phrase .phrase-sub {
+      #mj-editorial-phrase .phrase-sub,
+      #mj-editorial-phrase-bottom .phrase-sub {
         font-size: 11px;
         letter-spacing: 2px;
       }
+    }
+
+    /* Frase debaixo do video */
+    #mj-editorial-phrase-bottom {
+      text-align: center;
+      padding: 56px 24px;
+      background: var(--bg-site);
+    }
+    #mj-editorial-phrase-bottom .phrase-main {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 38px;
+      font-weight: 400;
+      color: var(--text-primary);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+    #mj-editorial-phrase-bottom .phrase-main em {
+      font-style: italic;
+      color: var(--raspberry);
+      text-transform: lowercase;
+    }
+    #mj-editorial-phrase-bottom .phrase-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
     }
 
     /* ═══ Testimonials ═══ */
@@ -1256,31 +1287,36 @@
     }
   }
 
-  // ═══ 9b. Inject editorial phrase on homepage ═══
+  // ═══ 9b. Inject editorial phrases on homepage ═══
   function injectEditorialPhrase() {
     if (window.location.pathname !== '/' && window.location.pathname !== '') return;
     if (document.getElementById('mj-editorial-phrase')) return;
 
-    var phrases = [
-      { main: 'A POESIA DE SER <em>única</em>', sub: 'MODA CRISTÃ COM PROPÓSITO' },
-      { main: 'ELEGÂNCIA QUE <em>inspira</em>', sub: 'DO CEARÁ PARA TODO O BRASIL' },
-      { main: 'MODÉSTIA E <em>sofisticação</em>', sub: 'CADA PEÇA CONTA UMA HISTÓRIA' }
-    ];
-    var phrase = phrases[Math.floor(Math.random() * phrases.length)];
+    // Frase do TOPO (antes do video)
+    var topSection = document.createElement('div');
+    topSection.id = 'mj-editorial-phrase';
+    topSection.innerHTML =
+      '<div class="phrase-main">A POESIA DE SER <em>única</em></div>' +
+      '<div class="phrase-sub">MODA CRISTÃ COM PROPÓSITO</div>';
 
-    var section = document.createElement('div');
-    section.id = 'mj-editorial-phrase';
-    section.innerHTML =
-      '<div class="phrase-main">' + phrase.main + '</div>' +
-      '<div class="phrase-sub">' + phrase.sub + '</div>';
+    // Frase DEBAIXO do video
+    var bottomSection = document.createElement('div');
+    bottomSection.id = 'mj-editorial-phrase-bottom';
+    bottomSection.innerHTML =
+      '<div class="phrase-main">ELEGÂNCIA QUE <em>inspira</em></div>' +
+      '<div class="phrase-sub">DO CEARÁ PARA TODO O BRASIL</div>';
+    bottomSection.style.cssText = 'text-align:center;padding:64px 24px;';
 
-    // Insert after banner/slider, before products
-    var slider = document.querySelector('.js-home-slider-section, .home-slider, .js-home-slider');
+    // Insert top phrase at start of container
     var productSection = document.querySelector('.js-home-sections-container');
-    if (slider && slider.parentNode) {
-      slider.parentNode.insertBefore(section, slider.nextSibling);
-    } else if (productSection) {
-      productSection.insertBefore(section, productSection.firstChild);
+    if (productSection) {
+      productSection.insertBefore(topSection, productSection.firstChild);
+    }
+
+    // Insert bottom phrase after video section
+    var videoSection = document.querySelector('.js-section-video-home, [data-store="home-video"]');
+    if (videoSection && videoSection.parentNode) {
+      videoSection.parentNode.insertBefore(bottomSection, videoSection.nextSibling);
     }
   }
 

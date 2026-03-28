@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { buscarProdutos, CAT_ICON, type ProdutoComCount } from '../../lib/pim'
-import { Search, ChevronRight, CheckCircle2, AlertCircle, ImageOff } from 'lucide-react'
+import { Search, ChevronRight, ImageOff, Package, AlertTriangle } from 'lucide-react'
 
 const CATS = ['', 'vestidos', 'conjuntos', 'macacoes', 'blusas', 'calcas']
 const CAT_LABEL: Record<string, string> = { '': 'Todos', vestidos: 'Vestidos', conjuntos: 'Conjuntos', macacoes: 'Macacões', blusas: 'Blusas', calcas: 'Calças' }
+
+function stockColor(qty: number) {
+  if (qty === 0) return '#e74c3c'
+  if (qty <= 3) return '#f39c12'
+  return '#27ae60'
+}
 
 export default function PimLista() {
   const [produtos, setProdutos] = useState<ProdutoComCount[]>([])
@@ -23,24 +29,26 @@ export default function PimLista() {
     return () => clearTimeout(t)
   }, [busca, cat])
 
-  const comDesc = produtos.filter(p => p.descricao).length
+  const semEstoque = produtos.filter(p => p.estoque === 0).length
+  const baixoEstoque = produtos.filter(p => p.estoque > 0 && p.estoque <= 3).length
 
   return (
     <div style={{ padding: '32px 40px' }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--azul)', margin: 0 }}>Catálogo PIM</h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 4 }}>
-          {produtos.length} produtos ·{' '}
-          <span style={{ color: 'var(--success)' }}>{comDesc} com descrição</span>
-          {' · '}
-          <span style={{ color: 'var(--warning)' }}>{produtos.length - comDesc} sem descrição</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Package size={22} color="var(--vinho)" />
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--azul)', margin: 0 }}>Estoque & Catálogo</h1>
+        </div>
+        <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 6 }}>
+          {produtos.length} produtos
+          {semEstoque > 0 && <> · <span style={{ color: '#e74c3c', fontWeight: 600 }}>{semEstoque} sem estoque</span></>}
+          {baixoEstoque > 0 && <> · <span style={{ color: '#f39c12', fontWeight: 600 }}>{baixoEstoque} estoque baixo</span></>}
         </p>
       </div>
 
       {/* Filtros */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 20, alignItems: 'center', flexWrap: 'wrap' }}>
-        {/* Busca */}
         <div style={{ position: 'relative', flex: 1, minWidth: 200 }}>
           <Search size={15} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)' }} />
           <input
@@ -49,8 +57,6 @@ export default function PimLista() {
             style={{ width: '100%', padding: '10px 14px 10px 38px', border: '1px solid var(--border)', borderRadius: 10, fontSize: 13, color: 'var(--text)', background: 'var(--surface)', outline: 'none', boxSizing: 'border-box' }}
           />
         </div>
-
-        {/* Categorias */}
         <div style={{ display: 'flex', gap: 6 }}>
           {CATS.map(c => (
             <button
@@ -68,8 +74,22 @@ export default function PimLista() {
         </div>
       </div>
 
+      {/* Header da tabela */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: '56px 1fr 110px 90px 40px',
+        gap: 14, padding: '10px 20px', fontSize: 10, fontWeight: 700,
+        color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px',
+        borderBottom: '2px solid var(--border)',
+      }}>
+        <span />
+        <span>Produto</span>
+        <span style={{ textAlign: 'right' }}>Preço Atacado</span>
+        <span style={{ textAlign: 'center' }}>Estoque</span>
+        <span />
+      </div>
+
       {/* Lista */}
-      <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, overflow: 'hidden' }}>
+      <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '0 0 14px 14px', overflow: 'hidden' }}>
         {loading ? (
           <div style={{ padding: 48, textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>Carregando produtos...</div>
         ) : produtos.length === 0 ? (
@@ -80,8 +100,8 @@ export default function PimLista() {
               key={p.id}
               onClick={() => navigate(`/pim/${p.id}`)}
               style={{
-                display: 'flex', alignItems: 'center', gap: 14,
-                padding: '12px 20px',
+                display: 'grid', gridTemplateColumns: '56px 1fr 110px 90px 40px',
+                gap: 14, alignItems: 'center', padding: '12px 20px',
                 borderBottom: i < produtos.length - 1 ? '1px solid var(--border)' : 'none',
                 cursor: 'pointer', transition: 'background 0.12s',
               }}
@@ -89,7 +109,7 @@ export default function PimLista() {
               onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = 'transparent')}
             >
               {/* Foto */}
-              <div style={{ width: 44, height: 44, borderRadius: 10, background: 'var(--bg)', overflow: 'hidden', flexShrink: 0, border: '1px solid var(--border)' }}>
+              <div style={{ width: 44, height: 56, borderRadius: 6, background: 'var(--bg)', overflow: 'hidden', border: '1px solid var(--border)' }}>
                 {p.imagem_url
                   ? <img src={p.imagem_url} alt={p.nome} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ImageOff size={16} color="var(--text-light)" /></div>
@@ -97,38 +117,38 @@ export default function PimLista() {
               </div>
 
               {/* Info */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                  <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.nome}</p>
-                  {p.descricao
-                    ? <CheckCircle2 size={13} color="var(--success)" style={{ flexShrink: 0 }} />
-                    : <AlertCircle size={13} color="var(--warning)" style={{ flexShrink: 0 }} />
-                  }
-                </div>
-                <div style={{ display: 'flex', gap: 8, marginTop: 3 }}>
-                  <span style={{ fontSize: 11, background: 'var(--vinho-light)', color: 'var(--vinho)', padding: '2px 8px', borderRadius: 100, fontWeight: 600, textTransform: 'capitalize' }}>
+              <div style={{ minWidth: 0 }}>
+                <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {p.nome}
+                </p>
+                <div style={{ display: 'flex', gap: 8, marginTop: 3, alignItems: 'center' }}>
+                  <span style={{ fontSize: 10, background: 'var(--vinho-light)', color: 'var(--vinho)', padding: '2px 8px', borderRadius: 100, fontWeight: 600, textTransform: 'capitalize' }}>
                     {CAT_ICON[p.categoria] || ''} {p.categoria}
                   </span>
                   {p.sku && <span style={{ fontSize: 11, color: 'var(--text-light)' }}>REF: {p.sku}</span>}
                 </div>
               </div>
 
-              {/* Variações + Preço + Estoque */}
-              <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                {p.num_variacoes > 0 && (
-                  <span style={{ fontSize: 10, background: '#e8f0fe', color: '#0e2955', padding: '2px 8px', borderRadius: 100, fontWeight: 700, display: 'inline-block', marginBottom: 4 }}>
-                    {p.num_variacoes} VARIAÇÕES
+              {/* Preço ATACADO */}
+              <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--azul)', margin: 0, textAlign: 'right' }}>
+                R$ {Number(p.preco_atacado || 0).toFixed(2)}
+              </p>
+
+              {/* Estoque semáforo */}
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                  {p.estoque === 0 && <AlertTriangle size={12} color="#e74c3c" />}
+                  <span style={{
+                    fontSize: 16, fontWeight: 800,
+                    color: stockColor(p.estoque),
+                  }}>
+                    {p.estoque}
                   </span>
-                )}
-                <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--azul)', margin: 0 }}>
-                  R$ {Number(p.preco_varejo || 0).toFixed(2)}
-                </p>
-                <p style={{ fontSize: 11, color: p.estoque <= 3 ? 'var(--danger)' : 'var(--text-light)', margin: '2px 0 0', fontWeight: p.estoque <= 3 ? 600 : 400 }}>
-                  Estoque: {p.estoque}
-                </p>
+                </div>
+                <span style={{ fontSize: 9, color: 'var(--text-light)', textTransform: 'uppercase' }}>unid.</span>
               </div>
 
-              <ChevronRight size={15} color="var(--text-light)" style={{ flexShrink: 0 }} />
+              <ChevronRight size={15} color="var(--text-light)" style={{ justifySelf: 'end' }} />
             </div>
           ))
         )}

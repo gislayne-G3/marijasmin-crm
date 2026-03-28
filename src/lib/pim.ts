@@ -7,6 +7,9 @@ export interface Produto {
   categoria: string
   preco_atacado: number
   preco_varejo: number
+  preco_promocional: number | null
+  preco_promo_inicio: string | null
+  preco_promo_fim: string | null
   estoque: number
   imagem_url: string | null
   ativo: boolean
@@ -14,8 +17,22 @@ export interface Produto {
   descricao_curta: string | null
   destaque: boolean
   modelo_nome: string | null
+  modelo_tamanho: string | null
+  modelo_altura: string | null
   tiny_id: string | null
   nuvemshop_id: string | null
+  seo_title: string | null
+  seo_meta_description: string | null
+  seo_slug: string | null
+  seo_alt_text: string | null
+  composicao: string | null
+  modelagem: string | null
+  comprimento_tipo: string | null
+  manga: string | null
+  ocasioes: string[] | null
+  notas_fotos: string | null
+  description_generated_at: string | null
+  nuvemshop_last_sync: string | null
   updated_at?: string
 }
 
@@ -47,7 +64,23 @@ export interface ProdutoMedida {
   medidas: Record<string, string>
 }
 
-export const TAMANHOS = ['M', 'G', 'GG'] as const
+export const TAMANHOS = ['P', 'M', 'G', 'GG'] as const
+
+// Medidas padrão Marijasmin (em cm, da peça)
+export const MEDIDAS_PADRAO: Record<string, Record<string, string>> = {
+  P:  { busto: '84-88', cintura: '66-70', quadril: '90-94' },
+  M:  { busto: '88-92', cintura: '70-74', quadril: '94-98' },
+  G:  { busto: '96-100', cintura: '78-82', quadril: '102-106' },
+  GG: { busto: '104-108', cintura: '86-90', quadril: '110-114' },
+}
+
+export const OCASIOES_DISPONIVEIS = [
+  'Para o culto',
+  'Para festas',
+  'Para o trabalho',
+  'Para o dia a dia',
+  'Casual',
+] as const
 
 export const CAMPOS_MEDIDAS: Record<string, string[]> = {
   vestidos:  ['busto', 'cintura', 'quadril', 'comprimento'],

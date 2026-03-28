@@ -62,6 +62,9 @@
       overflow: hidden !important;
       line-height: 1.4 !important;
       white-space: nowrap !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+      box-sizing: border-box !important;
     }
     #mj-topbar .topbar-marquee {
       display: inline-block;
@@ -93,6 +96,9 @@
       position: sticky !important;
       top: 42px !important;
       z-index: 9999 !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+      box-sizing: border-box !important;
     }
     .nav-primary a, .nav-desktop a {
       font-family: 'Inter', sans-serif !important;

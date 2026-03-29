@@ -4,11 +4,11 @@
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "functions": {
-    "api/pim-sync-fotos-nuvemshop.ts": { "maxDuration": 120 },
-    "api/pim-analisar-fotos.ts":       { "maxDuration": 120 },
     "api/nuvemshop-import-novos.ts":   { "maxDuration": 120 },
     "api/nuvemshop-sync-estoque.ts":   { "maxDuration": 120 },
     "api/tiny-sync-pedidos.ts":        { "maxDuration": 120 },
+    "api/tiny-sync-precos.ts":         { "maxDuration": 120 },
+    "api/tiny-sync-estoque.ts":        { "maxDuration": 120 },
     "api/tiny-webhook-pedido.ts":      { "maxDuration": 60 },
     "api/tiny-reservar-estoque.ts":    { "maxDuration": 60 },
     "api/crm-api.ts":                  { "maxDuration": 120 }

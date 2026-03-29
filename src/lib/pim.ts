@@ -255,11 +255,6 @@ export async function salvarMedidas(produtoId: number, medidas: Omit<ProdutoMedi
   if (error) throw error
 }
 
-// Correspondência padrão de tamanhos
-const TAMANHO_NUMERO: Record<string, string> = {
-  P: '36', M: '38', G: '40/42', GG: '44', XG: '46', XGG: '48',
-}
-
 // Guia de como medir (por campo)
 const GUIA_MEDIDAS: Record<string, string> = {
   busto: 'Meça ao redor da parte mais larga do peito, com os braços relaxados.',
@@ -302,7 +297,6 @@ export function gerarHtmlDescricao(
   const COR_DARK  = '#5a0630'
   const COR_BG    = '#fdf0f5'
   const COR_BORDA = '#e8c0d2'
-  const COR_MUTED = '#7a4060'
 
   // ── ESTILOS DO ACCORDION ──────────────────────────────────────────────────
   const accordionHeader = `cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid ${COR_BORDA};font-size:13px;font-weight:700;color:${COR_DARK};letter-spacing:0.5px;text-transform:uppercase;background:#fff`

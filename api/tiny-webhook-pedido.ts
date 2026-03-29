@@ -8,7 +8,7 @@ const NS_UA      = 'Ecossistema Marijasmin (gislayne.marijasmin@gmail.com)'
 
 const supabase = createClient(
   process.env.VITE_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))

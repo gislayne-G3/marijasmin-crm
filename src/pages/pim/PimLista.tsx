@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { buscarProdutos, CAT_ICON, type ProdutoComCount } from '../../lib/pim'
+import { apiPost } from '../../lib/api'
 import { Search, ChevronRight, ImageOff, Package, AlertTriangle, RefreshCw, DollarSign } from 'lucide-react'
 
 const CATS = ['', 'vestidos', 'conjuntos', 'macacoes', 'blusas', 'calcas']
@@ -39,7 +40,7 @@ export default function PimLista() {
     setSyncing(true)
     setSyncMsg('🔄 Sincronizando estoque do Tiny...')
     try {
-      const res = await fetch('/api/tiny-sync-estoque', { method: 'POST', credentials: 'include' })
+      const res = await apiPost('/api/tiny-sync-estoque')
       const data = await res.json()
       setSyncMsg(`✅ Estoque atualizado! ${data.atualizados} variações sincronizadas.`)
       // Recarrega lista
@@ -57,7 +58,7 @@ export default function PimLista() {
     setSyncPrecos(true)
     setSyncMsg('🔄 Puxando preços do Tiny (atacado + promo)...')
     try {
-      const res = await fetch('/api/tiny-sync-precos', { method: 'POST', credentials: 'include' })
+      const res = await apiPost('/api/tiny-sync-precos')
       const data = await res.json()
       const promoCount = (data.resultados || []).filter((r: { preco_promo: number | null }) => r.preco_promo && r.preco_promo > 0).length
       setSyncMsg(`✅ Preços atualizados! ${data.atualizados} produtos. ${promoCount} em promoção.`)
